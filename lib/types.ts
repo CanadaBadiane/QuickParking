@@ -23,10 +23,11 @@ export interface ParkingSpot {
 }
 
 export interface User {
-  id: string;
+  idUser: string;
   name: string;
   email: string;
   phone?: string;
+  password: String;
   createdAt: string;
 }
 

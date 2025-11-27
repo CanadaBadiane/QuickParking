@@ -22,7 +22,7 @@ export async function GET(
   }
 
   // 2. Chercher l'utilisateur
-  const user = users.find((u) => u.id === reservation.userId);
+  const user = users.find((u) => u.idUser === reservation.userId);
 
   // 3. Récupérer les détails du parking spot via l'API
   let parkingSpot = null;
