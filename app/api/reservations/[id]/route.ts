@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { getAuth } from "@clerk/nextjs/server";
 import { reservations, users } from "@/lib/data";
 
 // GET /api/reservations/[id] - Récupérer une réservation par son ID
@@ -7,6 +8,13 @@ export async function GET(
   { params }: { params: { id: string } }
 ) {
   const { id } = params;
+  const auth = getAuth(request);
+  if (!auth.userId) {
+    return NextResponse.json(
+      { success: false, error: "Non authentifié" },
+      { status: 401 }
+    );
+  }
 
   // 1. Chercher la réservation
   const reservation = reservations.find((r) => r.idReservation === id);
@@ -24,7 +32,15 @@ export async function GET(
   // 2. Chercher l'utilisateur
   const user = users.find((u) => u.idUser === reservation.userId);
 
-  // 3. Récupérer les détails du parking spot via l'API
+  // 3. Vérifier l'accès (propriétaire ou admin)
+  if (auth.userId !== user?.clerkId && auth.sessionClaims?.roles !== "admin") {
+    return NextResponse.json(
+      { success: false, error: "Accès refusé" },
+      { status: 403 }
+    );
+  }
+
+  // 4. Récupérer les détails du parking spot via l'API
   let parkingSpot = null;
   try {
     const spotResponse = await fetch(
@@ -38,7 +54,7 @@ export async function GET(
     parkingSpot = null;
   }
 
-  // 4. Réponse détaillée
+  // 5. Réponse détaillée
   return NextResponse.json({
     success: true,
     data: {
@@ -55,6 +71,13 @@ export async function PATCH(
   { params }: { params: { id: string } }
 ) {
   const { id } = params;
+  const auth = getAuth(request);
+  if (!auth.userId) {
+    return NextResponse.json(
+      { success: false, error: "Non authentifié" },
+      { status: 401 }
+    );
+  }
 
   // 1. Chercher la réservation
   const reservation = reservations.find((r) => r.idReservation === id);
@@ -65,7 +88,17 @@ export async function PATCH(
     );
   }
 
-  // 2. Récupérer la durée supplémentaire depuis le body
+  // 2. Chercher l'utilisateur
+  const user = users.find((u) => u.idUser === reservation.userId);
+  // 3. Vérifier l'accès (propriétaire ou admin)
+  if (auth.userId !== user?.clerkId && auth.sessionClaims?.roles !== "admin") {
+    return NextResponse.json(
+      { success: false, error: "Accès refusé" },
+      { status: 403 }
+    );
+  }
+
+  // 4. Récupérer la durée supplémentaire depuis le body
   const body = await request.json();
   const { extraMinutes } = body;
   if (typeof extraMinutes !== "number" || extraMinutes <= 0) {
@@ -75,7 +108,7 @@ export async function PATCH(
     );
   }
 
-  // 3. Calculer la durée totale en minutes
+  // 5. Calculer la durée totale en minutes
   const start = new Date(reservation.startDateTime);
   const end = new Date(reservation.endDateTime);
   const dureeActuelle = (end.getTime() - start.getTime()) / (1000 * 60);
@@ -88,7 +121,7 @@ export async function PATCH(
     );
   }
 
-  // 4. Mettre à jour la dateHeureFin
+  // 6. Mettre à jour la dateHeureFin
   const newEnd = new Date(end.getTime() + extraMinutes * 60 * 1000);
   reservation.endDateTime = newEnd.toISOString();
 
@@ -101,6 +134,13 @@ export async function DELETE(
   { params }: { params: { id: string } }
 ) {
   const { id } = params;
+  const auth = getAuth(request);
+  if (!auth.userId) {
+    return NextResponse.json(
+      { success: false, error: "Non authentifié" },
+      { status: 401 }
+    );
+  }
 
   // 1. Chercher la réservation
   const reservation = reservations.find((r) => r.idReservation === id);
@@ -111,7 +151,17 @@ export async function DELETE(
     );
   }
 
-  // 2. Trouver son index et le supprimer
+  // 2. Chercher l'utilisateur
+  const user = users.find((u) => u.idUser === reservation.userId);
+  // 3. Vérifier l'accès (propriétaire ou admin)
+  if (auth.userId !== user?.clerkId && auth.sessionClaims?.roles !== "admin") {
+    return NextResponse.json(
+      { success: false, error: "Accès refusé" },
+      { status: 403 }
+    );
+  }
+
+  // 4. Trouver son index et le supprimer
   const index = reservations.findIndex((r) => r.idReservation === id);
   if (index !== -1) {
     reservations.splice(index, 1);

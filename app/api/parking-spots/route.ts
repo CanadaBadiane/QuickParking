@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 
+// GET /api/parking-spots - Retourne les places de stationnement payantes à Montréal
 export async function GET() {
   try {
     // 1. Récupérer les données de l'API de Montréal

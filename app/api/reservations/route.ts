@@ -1,75 +1,53 @@
 import { NextRequest, NextResponse } from "next/server";
+import { getAuth } from "@clerk/nextjs/server";
 import { getReservationsByUserId, getUserById } from "@/lib/data";
 
 // GET /api/reservations?userId=xxx - Récupérer toutes les réservations d'un utilisateur
 export async function GET(request: NextRequest) {
   try {
-    // 1. Récupérer le userId depuis les query parameters
-    const { searchParams } = new URL(request.url);
-    const userId = searchParams.get("userId");
-
-    console.log(`Recherche des réservations pour l'utilisateur: ${userId}`);
-
-    // 2. Validation du userId
-    if (!userId) {
+    const auth = getAuth(request);
+    if (!auth.userId) {
       return NextResponse.json(
-        {
-          success: false,
-          error: "Paramètre userId requis",
-          message: "Veuillez fournir un userId dans les paramètres de requête",
-        },
-        { status: 400 }
+        { success: false, error: "Non authentifié" },
+        { status: 401 }
       );
     }
 
-    // 3. Vérifier que l'utilisateur existe
+    // Récupérer le userId depuis la session Clerk
+    const userId = auth.userId;
+
+    // Vérifier que l'utilisateur existe
     const user = getUserById(userId);
     if (!user) {
       return NextResponse.json(
-        {
-          success: false,
-          error: "Utilisateur non trouvé",
-          message: `Aucun utilisateur avec l'ID ${userId}`,
-        },
+        { success: false, error: "Utilisateur non trouvé" },
         { status: 404 }
       );
     }
 
-    // 4. Récupérer les réservations de l'utilisateur
+    // Récupérer les réservations de l'utilisateur
     const userReservations = getReservationsByUserId(userId);
 
-    console.log(
-      `${userReservations.length} réservations trouvées pour ${user.name}`
-    );
-
-    // 5. Enrichir les réservations avec les détails des places de stationnement
+    // Enrichir les réservations avec les détails des places de stationnement
     const detailReservations = await Promise.all(
       userReservations.map(async (reservation) => {
         try {
-          // Récupérer les détails de la place depuis votre API
           const spotResponse = await fetch(
             `${request.nextUrl.origin}/api/parking-spots/${reservation.parkingSpotId}`
           );
-
           if (spotResponse.ok) {
             const spotData = await spotResponse.json();
             return {
               ...reservation,
               parkingSpot: spotData.success ? spotData.data : null,
-              user: user, // Ajouter les infos utilisateur
+              user: user,
             };
           }
-
-          // Si l'API échoue, retourner la réservation sans enrichissement
           return {
             ...reservation,
             user: user,
           };
         } catch (error) {
-          console.warn(
-            `Impossible d'enrichir la réservation ${reservation.idReservation}:`,
-            error
-          );
           return {
             ...reservation,
             user: user,
@@ -78,23 +56,22 @@ export async function GET(request: NextRequest) {
       })
     );
 
-    // 6. Organiser les réservations par statut
+    // Organiser les réservations par statut
     const reservationsByStatus = {
       active: detailReservations.filter((r) => r.status === "active"),
       completed: detailReservations.filter((r) => r.status === "completed"),
       cancelled: detailReservations.filter((r) => r.status === "cancelled"),
     };
 
-    // 7. Statistiques rapides
+    // Statistiques rapides
     const stats = {
       total: detailReservations.length,
       active: reservationsByStatus.active.length,
       completed: reservationsByStatus.completed.length,
       cancelled: reservationsByStatus.cancelled.length,
-      totalSpent: detailReservations.filter((r) => r.status === "completed"),
     };
 
-    // 8. Réponse finale
+    // Réponse finale
     const apiResponse = {
       success: true,
       data: {
@@ -112,8 +89,6 @@ export async function GET(request: NextRequest) {
 
     return NextResponse.json(apiResponse);
   } catch (error) {
-    console.error("Erreur lors de la récupération des réservations:", error);
-
     return NextResponse.json(
       {
         success: false,
