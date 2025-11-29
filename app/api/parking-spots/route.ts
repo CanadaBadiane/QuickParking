@@ -40,7 +40,7 @@ export async function GET() {
 
         return {
           // Données de base de Montréal
-          id: props.PANNEAU_ID_PAN?.toString() || `mtl-${index}`,
+          parkingSpotId: props.PANNEAU_ID_PAN?.toString() || `mtl-${index}`,
           name: `Place de stationnement - ${props.NOM_ARROND || "Montréal"}`,
           address: `${props.TOPONYME_PAN || "Rue inconnue"}, ${
             props.NOM_ARROND || "Montréal"
@@ -87,7 +87,7 @@ export async function GET() {
       error: "API Montréal indisponible",
       data: [
         {
-          id: "fallback-1",
+          parkingSpotId: "fallback-1",
           name: "Place de stationnement - Plateau",
           address: "Rue Saint-Denis, Le Plateau-Mont-Royal",
           pricePerHour: 3.5,

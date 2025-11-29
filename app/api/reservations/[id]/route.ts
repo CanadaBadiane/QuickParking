@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getAuth } from "@clerk/nextjs/server";
-import { reservations, users } from "@/lib/data";
+import { reservations, users, parkingSpots } from "@/lib/data";
+import { paiements } from "@/lib/data";
 
 // GET /api/reservations/[id] - Récupérer une réservation par son ID
 export async function GET(
@@ -17,7 +18,7 @@ export async function GET(
   }
 
   // 1. Chercher la réservation
-  const reservation = reservations.find((r) => r.idReservation === id);
+  const reservation = reservations.find((r) => r.reservationId === id);
   if (!reservation) {
     return NextResponse.json(
       {
@@ -30,7 +31,7 @@ export async function GET(
   }
 
   // 2. Chercher l'utilisateur
-  const user = users.find((u) => u.idUser === reservation.userId);
+  const user = users.find((u) => u.userId === reservation.userId);
 
   // 3. Vérifier l'accès (propriétaire ou admin)
   if (auth.userId !== user?.clerkId && auth.sessionClaims?.roles !== "admin") {
@@ -40,7 +41,7 @@ export async function GET(
     );
   }
 
-  // 4. Récupérer les détails du parking spot via l'API
+  // 5. Récupérer les détails du parking spot via l'API
   let parkingSpot = null;
   try {
     const spotResponse = await fetch(
@@ -54,13 +55,20 @@ export async function GET(
     parkingSpot = null;
   }
 
-  // 5. Réponse détaillée
+  // 6. Vérification de la disponibilité (isAvailable)
+  let isAvailable = null;
+  if (parkingSpot && typeof parkingSpot.isAvailable === "boolean") {
+    isAvailable = parkingSpot.isAvailable;
+  }
+
+  // 7. Réponse détaillée
   return NextResponse.json({
     success: true,
     data: {
       ...reservation,
       user,
       parkingSpot,
+      isAvailable,
     },
   });
 }
@@ -80,7 +88,7 @@ export async function PATCH(
   }
 
   // 1. Chercher la réservation
-  const reservation = reservations.find((r) => r.idReservation === id);
+  const reservation = reservations.find((r) => r.reservationId === id);
   if (!reservation) {
     return NextResponse.json(
       { error: "Réservation non trouvée" },
@@ -89,7 +97,7 @@ export async function PATCH(
   }
 
   // 2. Chercher l'utilisateur
-  const user = users.find((u) => u.idUser === reservation.userId);
+  const user = users.find((u) => u.userId === reservation.userId);
   // 3. Vérifier l'accès (propriétaire ou admin)
   if (auth.userId !== user?.clerkId && auth.sessionClaims?.roles !== "admin") {
     return NextResponse.json(
@@ -98,7 +106,16 @@ export async function PATCH(
     );
   }
 
-  // 4. Récupérer la durée supplémentaire depuis le body
+  // 4. Vérifier si la réservation est déjà terminée
+  const now = new Date();
+  if (new Date(reservation.endDateTime) <= now) {
+    return NextResponse.json(
+      { error: "Impossible de modifier une réservation terminée." },
+      { status: 400 }
+    );
+  }
+
+  // 5. Récupérer la durée supplémentaire depuis le body
   const body = await request.json();
   const { extraMinutes } = body;
   if (typeof extraMinutes !== "number" || extraMinutes <= 0) {
@@ -108,7 +125,7 @@ export async function PATCH(
     );
   }
 
-  // 5. Calculer la durée totale en minutes
+  // 6. Calculer la durée totale en minutes
   const start = new Date(reservation.startDateTime);
   const end = new Date(reservation.endDateTime);
   const dureeActuelle = (end.getTime() - start.getTime()) / (1000 * 60);
@@ -121,7 +138,7 @@ export async function PATCH(
     );
   }
 
-  // 6. Mettre à jour la dateHeureFin
+  // 7. Mettre à jour la dateHeureFin
   const newEnd = new Date(end.getTime() + extraMinutes * 60 * 1000);
   reservation.endDateTime = newEnd.toISOString();
 
@@ -143,7 +160,7 @@ export async function DELETE(
   }
 
   // 1. Chercher la réservation
-  const reservation = reservations.find((r) => r.idReservation === id);
+  const reservation = reservations.find((r) => r.reservationId === id);
   if (!reservation) {
     return NextResponse.json(
       { error: "Réservation non trouvée" },
@@ -151,9 +168,17 @@ export async function DELETE(
     );
   }
 
-  // 2. Chercher l'utilisateur
-  const user = users.find((u) => u.idUser === reservation.userId);
-  // 3. Vérifier l'accès (propriétaire ou admin)
+  // 2. Vérifier que la réservation est active
+  if (reservation.status !== "active") {
+    return NextResponse.json(
+      { error: "Seules les réservations actives peuvent être supprimées." },
+      { status: 400 }
+    );
+  }
+
+  // 3. Chercher l'utilisateur
+  const user = users.find((u) => u.userId === reservation.userId);
+  // 4. Vérifier l'accès (propriétaire ou admin)
   if (auth.userId !== user?.clerkId && auth.sessionClaims?.roles !== "admin") {
     return NextResponse.json(
       { success: false, error: "Accès refusé" },
@@ -161,14 +186,25 @@ export async function DELETE(
     );
   }
 
-  // 4. Trouver son index et le supprimer
-  const index = reservations.findIndex((r) => r.idReservation === id);
+  // 5. Mettre à jour le parking spot (canReserve à true)
+  const spot = parkingSpots.find(
+    (p) => p.parkingSpotId === reservation.parkingSpotId
+  );
+  if (spot) {
+    spot.canReserve = true;
+  }
+
+  // 6. Mettre à jour le statut de la réservation à cancelled
+  reservation.status = "cancelled";
+
+  // 7. Supprimer la réservation
+  const index = reservations.findIndex((r) => r.reservationId === id);
   if (index !== -1) {
     reservations.splice(index, 1);
   }
 
   return NextResponse.json(
-    { success: true, message: "Réservation supprimée avec succès" },
+    { success: true, message: "Réservation annulée et supprimée avec succès" },
     { status: 200 }
   );
 }

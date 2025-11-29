@@ -12,7 +12,8 @@ export async function POST(request: NextRequest) {
     );
   }
   const newUser = {
-    idUser: `user-${Math.floor(Math.random() * 1000000)}`,
+    userId: `user-${Math.floor(Math.random() * 1000000)}`,
+    clerkId: `clerk-${Math.floor(Math.random() * 1000000)}`,
     name,
     email,
     phone,

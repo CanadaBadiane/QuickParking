@@ -49,7 +49,7 @@ export async function GET(
 
         targetSpot = {
           // Données de base de Montréal
-          id: spotId,
+          parkingSpotId: spotId,
           name: `Place de stationnement - ${props.NOM_ARROND || "Montréal"}`,
           address: `${props.TOPONYME_PAN || "Rue inconnue"}, ${
             props.NOM_ARROND || "Montréal"
@@ -125,7 +125,7 @@ export async function GET(
     // Fallback : place de démonstration si l'API échoue
     if (Params.id === "fallback-1" || error) {
       const fallbackSpot = {
-        id: Params.id,
+        parkingSpotId: Params.id,
         name: "Place de stationnement - Plateau (Demo)",
         address: "Rue Saint-Denis, Le Plateau-Mont-Royal",
         description: "Place de démonstration pour les tests",

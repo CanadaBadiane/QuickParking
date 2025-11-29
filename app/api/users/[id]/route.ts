@@ -15,7 +15,7 @@ export async function GET(
       { status: 401 }
     );
   }
-  const user = users.find((u) => u.idUser === id);
+  const user = users.find((u) => u.userId === id);
   if (!user) {
     return NextResponse.json(
       { success: false, error: "Utilisateur non trouvé" },
@@ -45,7 +45,7 @@ export async function PATCH(
       { status: 401 }
     );
   }
-  const userIndex = users.findIndex((u) => u.idUser === id);
+  const userIndex = users.findIndex((u) => u.userId === id);
   if (userIndex === -1) {
     return NextResponse.json(
       { success: false, error: "Utilisateur non trouvé" },
@@ -65,7 +65,7 @@ export async function PATCH(
   users[userIndex] = {
     ...users[userIndex],
     ...body,
-    idUser: id,
+    userId: id,
     createdAt: users[userIndex].createdAt,
   };
   return NextResponse.json({ success: true, user: users[userIndex] });
@@ -84,7 +84,7 @@ export async function DELETE(
       { status: 401 }
     );
   }
-  const userIndex = users.findIndex((u) => u.idUser === id);
+  const userIndex = users.findIndex((u) => u.userId === id);
   if (userIndex === -1) {
     return NextResponse.json(
       { success: false, error: "Utilisateur non trouvé" },

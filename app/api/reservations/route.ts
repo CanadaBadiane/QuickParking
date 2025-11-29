@@ -1,6 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getAuth } from "@clerk/nextjs/server";
-import { getReservationsByUserId, getUserById } from "@/lib/data";
+import {
+  getReservationsByUserId,
+  getUserById,
+  parkingSpots,
+  paiements,
+} from "@/lib/data";
 
 // GET /api/reservations?userId=xxx - Récupérer toutes les réservations d'un utilisateur
 export async function GET(request: NextRequest) {
@@ -116,14 +121,79 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    // Vérifier la disponibilité du parking spot
+    let parkingSpot = null;
+    try {
+      const spotResponse = await fetch(
+        `${request.nextUrl.origin}/api/parking-spots/${parkingSpotId}`
+      );
+      if (spotResponse.ok) {
+        const spotData = await spotResponse.json();
+        parkingSpot = spotData.success ? spotData.data : null;
+      }
+    } catch (error) {
+      parkingSpot = null;
+    }
+
+    if (!parkingSpot) {
+      return NextResponse.json(
+        {
+          success: false,
+          error: "Parking spot introuvable",
+          message: `Aucune place avec l'ID ${parkingSpotId}`,
+        },
+        { status: 404 }
+      );
+    }
+
+    // Vérification stricte de la disponibilité et du paiement en cours
+    if (!parkingSpot.isAvailable || !parkingSpot.canReserve) {
+      return NextResponse.json(
+        {
+          success: false,
+          error: "Place non disponible ou non réservable",
+          message: "Impossible de réserver cette place actuellement.",
+        },
+        { status: 400 }
+      );
+    }
+
+    // Vérifier s'il existe un paiement en cours (non terminé) pour cette place
+    // (simulation : status !== 'failed' && durée non écoulée)
+    const paiementEnCours = paiements.find((pay) => {
+      if (pay.parkingSpotId !== parkingSpotId) return false;
+      if (pay.status === "failed") return false;
+      if (!pay.createdAt || typeof pay.duration !== "number") return false;
+      const fin = new Date(pay.createdAt).getTime() + pay.duration * 60000;
+      return Date.now() < fin;
+    });
+    if (paiementEnCours) {
+      return NextResponse.json(
+        {
+          success: false,
+          error: "Paiement en cours pour cette place",
+          message: "Impossible de réserver tant qu'un paiement est actif.",
+        },
+        { status: 400 }
+      );
+    }
+
     // Création de la nouvelle réservation (simulée)
     const newReservation = {
-      id: Math.floor(Math.random() * 1000000).toString(),
+      reservationId: Math.floor(Math.random() * 1000000).toString(),
       userId,
       parkingSpotId,
       startDateTime,
       endDateTime,
     };
+
+    // Mettre à jour le champ canReserve à false dans le tableau local
+    const spotIndex = parkingSpots.findIndex(
+      (p) => p.parkingSpotId === parkingSpotId
+    );
+    if (spotIndex !== -1) {
+      parkingSpots[spotIndex].canReserve = false;
+    }
 
     return NextResponse.json(
       { success: true, reservation: newReservation },
