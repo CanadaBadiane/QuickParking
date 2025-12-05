@@ -1,76 +1,94 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getAuth } from "@clerk/nextjs/server";
-import { reservations, users, parkingSpots } from "@/lib/data";
-import { paiements } from "@/lib/data";
+import { verifyToken } from "@clerk/nextjs/server";
+import { prisma } from "@/lib/prisma";
 
 // GET /api/reservations/[id] - Récupérer une réservation par son ID
 export async function GET(
   request: NextRequest,
   { params }: { params: { id: string } }
 ) {
-  const { id } = params;
-  const auth = getAuth(request);
-  if (!auth.userId) {
-    return NextResponse.json(
-      { success: false, error: "Non authentifié" },
-      { status: 401 }
-    );
-  }
-
-  // 1. Chercher la réservation
-  const reservation = reservations.find((r) => r.reservationId === id);
-  if (!reservation) {
+  try {
+    const { id } = await params;
+    if (!id || typeof id !== "string" || id.trim() === "") {
+      return NextResponse.json(
+        { success: false, error: "ID de réservation manquant ou invalide" },
+        { status: 400 }
+      );
+    }
+    const authHeader = request.headers.get("authorization");
+    if (!authHeader) {
+      return NextResponse.json(
+        { success: false, error: "Non authentifié" },
+        { status: 401 }
+      );
+    }
+    const token = authHeader.replace("Bearer ", "");
+    let payload;
+    try {
+      payload = await verifyToken(token, {
+        secretKey: process.env.CLERK_SECRET_KEY!,
+      });
+    } catch (e) {
+      return NextResponse.json(
+        { success: false, error: "Token invalide" },
+        { status: 401 }
+      );
+    }
+    // Chercher la réservation en BDD
+    const reservation = await prisma.reservation.findUnique({
+      where: { reservationId: id },
+    });
+    if (!reservation) {
+      return NextResponse.json(
+        { success: false, error: "Réservation non trouvée" },
+        { status: 404 }
+      );
+    }
+    // Vérifier l'accès (propriétaire ou admin)
+    const requestingUser = await prisma.user.findUnique({
+      where: { clerkId: payload.sub },
+    });
+    if (
+      !requestingUser ||
+      (requestingUser.userId !== reservation.userId &&
+        requestingUser.role !== "admin")
+    ) {
+      return NextResponse.json(
+        { success: false, error: "Accès refusé" },
+        { status: 403 }
+      );
+    }
+    // Mise à jour automatique du statut à 'completed' si la date de fin est dépassée
+    const now = new Date();
+    if (
+      reservation.status === "active" &&
+      reservation.endDateTime &&
+      new Date(reservation.endDateTime) < now
+    ) {
+      await prisma.reservation.update({
+        where: { reservationId: reservation.reservationId },
+        data: { status: "completed" },
+      });
+      await prisma.parkingSpot.update({
+        where: { parkingSpotId: reservation.parkingSpotId },
+        data: { canReserve: true },
+      });
+      reservation.status = "completed";
+    }
+    return NextResponse.json({
+      success: true,
+      data: reservation,
+    });
+  } catch (error) {
     return NextResponse.json(
       {
         success: false,
-        error: "Réservation non trouvée",
-        message: `Aucune réservation avec l'ID ${id}`,
+        error: "Erreur serveur lors de la récupération de la réservation",
+        message: error instanceof Error ? error.message : String(error),
       },
-      { status: 404 }
+      { status: 500 }
     );
   }
-
-  // 2. Chercher l'utilisateur
-  const user = users.find((u) => u.userId === reservation.userId);
-
-  // 3. Vérifier l'accès (propriétaire ou admin)
-  if (auth.userId !== user?.clerkId && auth.sessionClaims?.roles !== "admin") {
-    return NextResponse.json(
-      { success: false, error: "Accès refusé" },
-      { status: 403 }
-    );
-  }
-
-  // 5. Récupérer les détails du parking spot via l'API
-  let parkingSpot = null;
-  try {
-    const spotResponse = await fetch(
-      `${request.nextUrl.origin}/api/parking-spots/${reservation.parkingSpotId}`
-    );
-    if (spotResponse.ok) {
-      const spotData = await spotResponse.json();
-      parkingSpot = spotData.success ? spotData.data : null;
-    }
-  } catch (error) {
-    parkingSpot = null;
-  }
-
-  // 6. Vérification de la disponibilité (isAvailable)
-  let isAvailable = null;
-  if (parkingSpot && typeof parkingSpot.isAvailable === "boolean") {
-    isAvailable = parkingSpot.isAvailable;
-  }
-
-  // 7. Réponse détaillée
-  return NextResponse.json({
-    success: true,
-    data: {
-      ...reservation,
-      user,
-      parkingSpot,
-      isAvailable,
-    },
-  });
 }
 
 // Modifier le temps de réservation
@@ -78,133 +96,118 @@ export async function PATCH(
   request: NextRequest,
   { params }: { params: { id: string } }
 ) {
-  const { id } = params;
-  const auth = getAuth(request);
-  if (!auth.userId) {
+  try {
+    const { id } = await params;
+    const authHeader = request.headers.get("authorization");
+    if (!authHeader) {
+      return NextResponse.json(
+        { success: false, error: "Non authentifié" },
+        { status: 401 }
+      );
+    }
+    const token = authHeader.replace("Bearer ", "");
+    let payload;
+    try {
+      payload = await verifyToken(token, {
+        secretKey: process.env.CLERK_SECRET_KEY!,
+      });
+    } catch (e) {
+      return NextResponse.json(
+        { success: false, error: "Token invalide" },
+        { status: 401 }
+      );
+    }
+    // Chercher la réservation en BDD
+    const reservation = await prisma.reservation.findUnique({
+      where: { reservationId: id },
+    });
+    if (!reservation) {
+      return NextResponse.json(
+        { error: "Réservation non trouvée" },
+        { status: 404 }
+      );
+    }
+    // Chercher l'utilisateur
+    const requestingUser = await prisma.user.findUnique({
+      where: { clerkId: payload.sub },
+    });
+    if (
+      !requestingUser ||
+      (requestingUser.userId !== reservation.userId &&
+        requestingUser.role !== "admin")
+    ) {
+      return NextResponse.json(
+        { success: false, error: "Accès refusé" },
+        { status: 403 }
+      );
+    }
+    // Mise à jour automatique du statut à 'completed' si la date de fin est dépassée
+    const now = new Date();
+    if (
+      reservation.status === "active" &&
+      reservation.endDateTime &&
+      new Date(reservation.endDateTime) < now
+    ) {
+      await prisma.reservation.update({
+        where: { reservationId: reservation.reservationId },
+        data: { status: "completed" },
+      });
+      await prisma.parkingSpot.update({
+        where: { parkingSpotId: reservation.parkingSpotId },
+        data: { canReserve: true },
+      });
+      return NextResponse.json(
+        { error: "Impossible de modifier une réservation terminée." },
+        { status: 400 }
+      );
+    }
+    // Récupérer la durée supplémentaire depuis le body
+    const body = await request.json();
+    // Annulation si body.cancel === true et réservation active
+    if (body.cancel === true && reservation.status === "active") {
+      const updated = await prisma.reservation.update({
+        where: { reservationId: id },
+        data: { status: "cancelled" },
+      });
+      await prisma.parkingSpot.update({
+        where: { parkingSpotId: reservation.parkingSpotId },
+        data: { canReserve: true },
+      });
+      return NextResponse.json({ success: true, reservation: updated });
+    }
+    const { extraMinutes } = body;
+    if (typeof extraMinutes !== "number" || extraMinutes <= 0) {
+      return NextResponse.json(
+        { error: "Durée supplémentaire invalide" },
+        { status: 400 }
+      );
+    }
+    // Calculer la durée totale en minutes
+    const start = new Date(reservation.startDateTime);
+    const end = new Date(reservation.endDateTime);
+    const dureeActuelle = (end.getTime() - start.getTime()) / (1000 * 60);
+    const dureeTotale = dureeActuelle + extraMinutes;
+    if (dureeTotale > 15) {
+      return NextResponse.json(
+        { error: "Durée maximale dépassée (15 min)" },
+        { status: 400 }
+      );
+    }
+    // Mettre à jour la dateHeureFin
+    const newEnd = new Date(end.getTime() + extraMinutes * 60 * 1000);
+    const updated = await prisma.reservation.update({
+      where: { reservationId: id },
+      data: { endDateTime: newEnd },
+    });
+    return NextResponse.json({ success: true, reservation: updated });
+  } catch (error) {
     return NextResponse.json(
-      { success: false, error: "Non authentifié" },
-      { status: 401 }
+      {
+        success: false,
+        error: "Erreur serveur lors de la modification de la réservation",
+        message: error instanceof Error ? error.message : String(error),
+      },
+      { status: 500 }
     );
   }
-
-  // 1. Chercher la réservation
-  const reservation = reservations.find((r) => r.reservationId === id);
-  if (!reservation) {
-    return NextResponse.json(
-      { error: "Réservation non trouvée" },
-      { status: 404 }
-    );
-  }
-
-  // 2. Chercher l'utilisateur
-  const user = users.find((u) => u.userId === reservation.userId);
-  // 3. Vérifier l'accès (propriétaire ou admin)
-  if (auth.userId !== user?.clerkId && auth.sessionClaims?.roles !== "admin") {
-    return NextResponse.json(
-      { success: false, error: "Accès refusé" },
-      { status: 403 }
-    );
-  }
-
-  // 4. Vérifier si la réservation est déjà terminée
-  const now = new Date();
-  if (new Date(reservation.endDateTime) <= now) {
-    return NextResponse.json(
-      { error: "Impossible de modifier une réservation terminée." },
-      { status: 400 }
-    );
-  }
-
-  // 5. Récupérer la durée supplémentaire depuis le body
-  const body = await request.json();
-  const { extraMinutes } = body;
-  if (typeof extraMinutes !== "number" || extraMinutes <= 0) {
-    return NextResponse.json(
-      { error: "Durée supplémentaire invalide" },
-      { status: 400 }
-    );
-  }
-
-  // 6. Calculer la durée totale en minutes
-  const start = new Date(reservation.startDateTime);
-  const end = new Date(reservation.endDateTime);
-  const dureeActuelle = (end.getTime() - start.getTime()) / (1000 * 60);
-  const dureeTotale = dureeActuelle + extraMinutes;
-
-  if (dureeTotale > 15) {
-    return NextResponse.json(
-      { error: "Durée maximale dépassée (15 min)" },
-      { status: 400 }
-    );
-  }
-
-  // 7. Mettre à jour la dateHeureFin
-  const newEnd = new Date(end.getTime() + extraMinutes * 60 * 1000);
-  reservation.endDateTime = newEnd.toISOString();
-
-  return NextResponse.json({ success: true, reservation });
-}
-
-// Supprimer une réservation
-export async function DELETE(
-  request: NextRequest,
-  { params }: { params: { id: string } }
-) {
-  const { id } = params;
-  const auth = getAuth(request);
-  if (!auth.userId) {
-    return NextResponse.json(
-      { success: false, error: "Non authentifié" },
-      { status: 401 }
-    );
-  }
-
-  // 1. Chercher la réservation
-  const reservation = reservations.find((r) => r.reservationId === id);
-  if (!reservation) {
-    return NextResponse.json(
-      { error: "Réservation non trouvée" },
-      { status: 404 }
-    );
-  }
-
-  // 2. Vérifier que la réservation est active
-  if (reservation.status !== "active") {
-    return NextResponse.json(
-      { error: "Seules les réservations actives peuvent être supprimées." },
-      { status: 400 }
-    );
-  }
-
-  // 3. Chercher l'utilisateur
-  const user = users.find((u) => u.userId === reservation.userId);
-  // 4. Vérifier l'accès (propriétaire ou admin)
-  if (auth.userId !== user?.clerkId && auth.sessionClaims?.roles !== "admin") {
-    return NextResponse.json(
-      { success: false, error: "Accès refusé" },
-      { status: 403 }
-    );
-  }
-
-  // 5. Mettre à jour le parking spot (canReserve à true)
-  const spot = parkingSpots.find(
-    (p) => p.parkingSpotId === reservation.parkingSpotId
-  );
-  if (spot) {
-    spot.canReserve = true;
-  }
-
-  // 6. Mettre à jour le statut de la réservation à cancelled
-  reservation.status = "cancelled";
-
-  // 7. Supprimer la réservation
-  const index = reservations.findIndex((r) => r.reservationId === id);
-  if (index !== -1) {
-    reservations.splice(index, 1);
-  }
-
-  return NextResponse.json(
-    { success: true, message: "Réservation annulée et supprimée avec succès" },
-    { status: 200 }
-  );
 }

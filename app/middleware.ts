@@ -1,11 +1,17 @@
-import { NextRequest, NextResponse } from "next/server";
-import { getAuth } from "@clerk/nextjs/server";
+import { clerkMiddleware, getAuth } from "@clerk/nextjs/server";
+import { NextResponse, NextRequest } from "next/server";
 
-export function middleware(request: NextRequest) {
+// Middleware Clerk d'abord
+const baseMiddleware = clerkMiddleware();
+
+export default function middleware(request: NextRequest, event: any) {
+  // Middleware Clerk
+  const clerkResult = baseMiddleware(request, event);
+  if (clerkResult) return clerkResult;
+
+  // Logique personnalisée
   const auth = getAuth(request);
   const isAdmin = auth.sessionClaims?.roles === "admin";
-
-  // Restriction : seules les routes /dashboard sont accessibles aux admins
   const url = request.nextUrl.pathname;
   if (url.includes("dashboard") && !isAdmin) {
     return NextResponse.redirect(new URL("/", request.url));
@@ -13,3 +19,7 @@ export function middleware(request: NextRequest) {
 
   return NextResponse.next();
 }
+
+export const config = {
+  matcher: ["/((?!api/auth|_next/static|_next/image|favicon.ico).*)"],
+};

@@ -3,7 +3,6 @@
 export interface ParkingSpot {
   parkingSpotId: string;
   name: string;
-  address: string;
   description: string;
   coordinates: {
     lat: number;
@@ -15,10 +14,6 @@ export interface ParkingSpot {
   canReserve: boolean;
   maxDuration: number;
   features: string[];
-  restrictions: string;
-  nearbyLandmarks: string[];
-  nextAvailable?: string;
-  source: string;
   lastUpdated: string;
 }
 
@@ -28,7 +23,9 @@ export interface User {
   name: string;
   email: string;
   phone?: string;
-  password: String;
+  role: "admin" | "user";
+  password: string;
+  confirmationPassword: string;
   createdAt: string;
 }
 
@@ -47,17 +44,11 @@ export interface Reservation {
   parkingSpot?: ParkingSpot;
 }
 
-export interface ReservationRequest {
-  userId: string;
-  parkingSpotId: string;
-  startDateTime: string;
-  endDateTime: string;
-}
-
 export interface Paiement {
   paiementId: string;
   clerkId: string;
-  parkingSpotId: String;
+  userId: string;
+  parkingSpotId: string;
   reservationId?: string;
   amount: number;
   duration: number; // en minutes

@@ -1,28 +1,36 @@
+// @ts-ignore
+import { toZonedTime } from "date-fns-tz";
 import { NextRequest, NextResponse } from "next/server";
-import { getAuth } from "@clerk/nextjs/server";
-import {
-  getReservationsByUserId,
-  getUserById,
-  parkingSpots,
-  paiements,
-} from "@/lib/data";
+import { verifyToken } from "@clerk/nextjs/server";
+import { prisma } from "@/lib/prisma";
 
-// GET /api/reservations?userId=xxx - Récupérer toutes les réservations d'un utilisateur
+// GET /api/reservations - Récupérer toutes les réservations de l'utilisateur authentifié
 export async function GET(request: NextRequest) {
   try {
-    const auth = getAuth(request);
-    if (!auth.userId) {
+    const authHeader = request.headers.get("authorization");
+    if (!authHeader) {
       return NextResponse.json(
         { success: false, error: "Non authentifié" },
         { status: 401 }
       );
     }
+    const token = authHeader.replace("Bearer ", "");
+    let payload;
+    try {
+      payload = await verifyToken(token, {
+        secretKey: process.env.CLERK_SECRET_KEY!,
+      });
+    } catch (e) {
+      return NextResponse.json(
+        { success: false, error: "Token invalide" },
+        { status: 401 }
+      );
+    }
 
-    // Récupérer le userId depuis la session Clerk
-    const userId = auth.userId;
-
-    // Vérifier que l'utilisateur existe
-    const user = getUserById(userId);
+    // Récupérer l'utilisateur via clerkId
+    const user = await prisma.user.findUnique({
+      where: { clerkId: payload.sub },
+    });
     if (!user) {
       return NextResponse.json(
         { success: false, error: "Utilisateur non trouvé" },
@@ -31,46 +39,20 @@ export async function GET(request: NextRequest) {
     }
 
     // Récupérer les réservations de l'utilisateur
-    const userReservations = getReservationsByUserId(userId);
-
-    // Enrichir les réservations avec les détails des places de stationnement
-    const detailReservations = await Promise.all(
-      userReservations.map(async (reservation) => {
-        try {
-          const spotResponse = await fetch(
-            `${request.nextUrl.origin}/api/parking-spots/${reservation.parkingSpotId}`
-          );
-          if (spotResponse.ok) {
-            const spotData = await spotResponse.json();
-            return {
-              ...reservation,
-              parkingSpot: spotData.success ? spotData.data : null,
-              user: user,
-            };
-          }
-          return {
-            ...reservation,
-            user: user,
-          };
-        } catch (error) {
-          return {
-            ...reservation,
-            user: user,
-          };
-        }
-      })
-    );
+    const reservations = await prisma.reservation.findMany({
+      where: { userId: user.userId },
+    });
 
     // Organiser les réservations par statut
     const reservationsByStatus = {
-      active: detailReservations.filter((r) => r.status === "active"),
-      completed: detailReservations.filter((r) => r.status === "completed"),
-      cancelled: detailReservations.filter((r) => r.status === "cancelled"),
+      active: reservations.filter((r) => r.status === "active"),
+      completed: reservations.filter((r) => r.status === "completed"),
+      cancelled: reservations.filter((r) => r.status === "cancelled"),
     };
 
     // Statistiques rapides
     const stats = {
-      total: detailReservations.length,
+      total: reservations.length,
       active: reservationsByStatus.active.length,
       completed: reservationsByStatus.completed.length,
       cancelled: reservationsByStatus.cancelled.length,
@@ -80,15 +62,10 @@ export async function GET(request: NextRequest) {
     const apiResponse = {
       success: true,
       data: {
-        user: user,
-        reservations: detailReservations,
-        reservationsByStatus: reservationsByStatus,
-        stats: stats,
+        reservations: reservations,
       },
       meta: {
-        userId: userId,
-        totalReservations: detailReservations.length,
-        retrievedAt: new Date().toISOString(),
+        totalReservations: reservations.length,
       },
     };
 
@@ -108,33 +85,81 @@ export async function GET(request: NextRequest) {
 // POST /api/reservations - Créer une nouvelle réservation
 export async function POST(request: NextRequest) {
   try {
+    const authHeader = request.headers.get("authorization");
+    if (!authHeader) {
+      return NextResponse.json(
+        { success: false, error: "Non authentifié" },
+        { status: 401 }
+      );
+    }
+    const token = authHeader.replace("Bearer ", "");
+    let payload;
+    try {
+      payload = await verifyToken(token, {
+        secretKey: process.env.CLERK_SECRET_KEY!,
+      });
+    } catch (e) {
+      return NextResponse.json(
+        { success: false, error: "Token invalide" },
+        { status: 401 }
+      );
+    }
+
+    // Récupérer l'utilisateur via clerkId
+    const user = await prisma.user.findUnique({
+      where: { clerkId: payload.sub },
+    });
+    if (!user) {
+      return NextResponse.json(
+        { success: false, error: "Utilisateur non trouvé" },
+        { status: 403 }
+      );
+    }
+
     const body = await request.json();
-    const { userId, parkingSpotId, startDateTime, endDateTime } = body;
-    if (!userId || !parkingSpotId || !startDateTime || !endDateTime) {
+    const { parkingSpotId, endDateTime, clerkId } = body;
+    // Si admin, peut créer pour un autre user via clerkId
+    const isAdmin = user.role === "admin";
+    const targetClerkId = isAdmin && clerkId ? clerkId : payload.sub;
+    const targetUser = await prisma.user.findUnique({
+      where: { clerkId: targetClerkId },
+    });
+    if (!targetUser) {
+      return NextResponse.json(
+        { success: false, error: "Utilisateur cible non trouvé" },
+        { status: 403 }
+      );
+    }
+
+    // Affiche l'heure canadienne (America/Toronto) reçue
+    if (body.endDateTime) {
+      const { toZonedTime } = require("date-fns-tz");
+      const endDateCanada = toZonedTime(
+        new Date(body.endDateTime),
+        "America/Toronto"
+      );
+    }
+    if (!parkingSpotId || !endDateTime) {
       return NextResponse.json(
         {
           success: false,
           error: "Champs manquants",
-          message: "userId, parkingSpotId, startDateTime, endDateTime requis",
+          message: "parkingSpotId, endDateTime requis",
         },
         { status: 400 }
       );
     }
 
-    // Vérifier la disponibilité du parking spot
-    let parkingSpot = null;
-    try {
-      const spotResponse = await fetch(
-        `${request.nextUrl.origin}/api/parking-spots/${parkingSpotId}`
-      );
-      if (spotResponse.ok) {
-        const spotData = await spotResponse.json();
-        parkingSpot = spotData.success ? spotData.data : null;
-      }
-    } catch (error) {
-      parkingSpot = null;
-    }
+    // startDateTime est toujours maintenant
+    // Heure actuelle en fuseau Canada (America/Toronto)
+    const nowUtc = new Date();
+    const nowCanada = toZonedTime(nowUtc, "America/Toronto");
+    const startDateTime = nowCanada;
 
+    // Vérifier la disponibilité du parking spot
+    let parkingSpot = await prisma.parkingSpot.findUnique({
+      where: { parkingSpotId },
+    });
     if (!parkingSpot) {
       return NextResponse.json(
         {
@@ -146,8 +171,42 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Vérification stricte de la disponibilité et du paiement en cours
-    if (!parkingSpot.isAvailable || !parkingSpot.canReserve) {
+    // Vérifier s'il existe un paiement en cours (non terminé) pour cette place
+    const paiementEnCours = await prisma.paiement.findFirst({
+      where: {
+        parkingSpotId,
+        status: "pending",
+      },
+      orderBy: { createdAt: "desc" },
+    });
+    if (paiementEnCours) {
+      const fin =
+        new Date(paiementEnCours.createdAt).getTime() +
+        (paiementEnCours.duration ?? 0) * 60000;
+      // Si le paiement est expiré, rendre la place disponible
+      if (Date.now() > fin && !parkingSpot.isAvailable) {
+        await prisma.parkingSpot.update({
+          where: { parkingSpotId },
+          data: { isAvailable: true },
+        });
+        parkingSpot = await prisma.parkingSpot.findUnique({
+          where: { parkingSpotId },
+        });
+      }
+      // Si le paiement est encore actif, empêcher la réservation
+      if (Date.now() < fin) {
+        return NextResponse.json(
+          {
+            success: false,
+            error: "Paiement en cours pour cette place",
+            message: "Impossible de réserver tant qu'un paiement est actif.",
+          },
+          { status: 400 }
+        );
+      }
+    }
+
+    if (!parkingSpot || !parkingSpot.isAvailable || !parkingSpot.canReserve) {
       return NextResponse.json(
         {
           success: false,
@@ -158,42 +217,46 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Vérifier s'il existe un paiement en cours (non terminé) pour cette place
-    // (simulation : status !== 'failed' && durée non écoulée)
-    const paiementEnCours = paiements.find((pay) => {
-      if (pay.parkingSpotId !== parkingSpotId) return false;
-      if (pay.status === "failed") return false;
-      if (!pay.createdAt || typeof pay.duration !== "number") return false;
-      const fin = new Date(pay.createdAt).getTime() + pay.duration * 60000;
-      return Date.now() < fin;
-    });
-    if (paiementEnCours) {
+    // Vérifier la contrainte de durée maximale (15 min)
+    const end = new Date(endDateTime);
+    const duree = (end.getTime() - startDateTime.getTime()) / (1000 * 60);
+    if (duree <= 0) {
       return NextResponse.json(
         {
           success: false,
-          error: "Paiement en cours pour cette place",
-          message: "Impossible de réserver tant qu'un paiement est actif.",
+          error: "Durée invalide",
+          message: "La date de fin doit être après l'heure actuelle.",
+        },
+        { status: 400 }
+      );
+    }
+    if (duree > 15) {
+      return NextResponse.json(
+        {
+          success: false,
+          error: "Durée maximale dépassée",
+          message: "La réservation ne peut pas dépasser 15 minutes.",
         },
         { status: 400 }
       );
     }
 
-    // Création de la nouvelle réservation (simulée)
-    const newReservation = {
-      reservationId: Math.floor(Math.random() * 1000000).toString(),
-      userId,
-      parkingSpotId,
-      startDateTime,
-      endDateTime,
-    };
+    // Création de la nouvelle réservation en BDD
+    const newReservation = await prisma.reservation.create({
+      data: {
+        userId: targetUser.userId,
+        parkingSpotId,
+        startDateTime,
+        endDateTime: new Date(endDateTime),
+        status: "active",
+      },
+    });
 
-    // Mettre à jour le champ canReserve à false dans le tableau local
-    const spotIndex = parkingSpots.findIndex(
-      (p) => p.parkingSpotId === parkingSpotId
-    );
-    if (spotIndex !== -1) {
-      parkingSpots[spotIndex].canReserve = false;
-    }
+    // Mettre à jour le champ canReserve à false
+    await prisma.parkingSpot.update({
+      where: { parkingSpotId },
+      data: { canReserve: false },
+    });
 
     return NextResponse.json(
       { success: true, reservation: newReservation },
@@ -203,7 +266,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json(
       {
         success: false,
-        error: "Erreur serveur",
+        error: "Erreur serveur lors de la création de la réservation",
         message: error instanceof Error ? error.message : "Erreur inconnue",
       },
       { status: 500 }

@@ -1,0 +1,95 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client"
+  output   = "../lib/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model ParkingSpot {
+  parkingSpotId   String   @id @default(cuid())
+  name            String
+  description     String
+  lat             Float
+  lng             Float
+  arrondissement  String
+  pricePerHour    Float
+  isAvailable     Boolean
+  canReserve      Boolean
+  maxDuration     Int      @default(120)
+  features        String[]
+  lastUpdated     String
+  reservations         Reservation[]
+  paiements            Paiement[]
+}
+
+model User {
+  userId               String @id @default(cuid())
+  clerkId              String @unique
+  name                 String
+  email                String @unique
+  phone                String?
+  role                 String @default("user")
+  password             String
+  confirmationPassword String
+  createdAt DateTime @default(now())
+  reservations         Reservation[]
+  paiements            Paiement[]
+}
+
+model Reservation {
+  reservationId   String      @id @default(cuid())
+  userId          String
+  parkingSpotId   String
+  startDateTime   DateTime    @default(now())
+  endDateTime     DateTime
+  status          ReservationStatus
+  createdAt       DateTime    @default(now())
+  updatedAt       DateTime    @updatedAt
+
+  user            User        @relation(fields: [userId], references: [userId])
+  parkingSpot     ParkingSpot @relation(fields: [parkingSpotId], references: [parkingSpotId])
+  paiements Paiement[]
+}
+
+enum ReservationStatus {
+  active
+  completed
+  cancelled
+}
+
+model Paiement {
+  paiementId     String      @id @default(cuid())
+  clerkId        String
+  userId         String
+  parkingSpotId  String
+  reservationId  String?
+  amount         Float
+  duration       Int
+  method         PaiementMethod
+  status         PaiementStatus
+  createdAt      DateTime    @default(now())
+
+  user           User        @relation(fields: [userId], references: [userId])
+  reservation    Reservation? @relation(fields: [reservationId], references: [reservationId])
+  parkingSpot    ParkingSpot @relation(fields: [parkingSpotId], references: [parkingSpotId])
+}
+
+enum PaiementMethod {  
+  credit_card
+  apple_pay
+  google_pay
+}
+
+enum PaiementStatus {
+  pending
+  completed
+  failed
+}
