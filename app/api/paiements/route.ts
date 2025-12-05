@@ -1,7 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
 import { verifyToken } from "@clerk/nextjs/server";
 import { prisma } from "@/lib/prisma";
+import Stripe from "stripe";
 
+const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
+  apiVersion: "2025-11-17.clover",
+});
 // GET /api/paiements - Récupérer tous les paiements de l'utilisateur connecté
 export async function GET(request: NextRequest) {
   try {
@@ -183,17 +187,29 @@ export async function POST(request: NextRequest) {
       : undefined;
     const pricePerMinute = spot ? spot.pricePerHour / 60 : 0;
     const amount = Math.round(pricePerMinute * duration * 100) / 100;
-    // Paiement simulé : succès ou échec
-    const paymentSuccess = Math.random() > 0.2;
-    const status = paymentSuccess ? "completed" : "failed";
+    // Création du PaymentIntent Stripe
+    const paymentIntent = await stripe.paymentIntents.create({
+      amount: Math.round(amount * 100), // Stripe attend des centimes
+      currency: "CAD",
+      metadata: {
+        clerkId: user.clerkId,
+        parkingSpotId,
+        reservationId: reservationId || "",
+      },
+      payment_method_types: ["card"],
+    });
+
+    // Création du paiement en BDD avec statut 'pending'
     const paiementData: any = {
       clerkId: user.clerkId,
+      userId: user.userId,
       parkingSpotId,
       amount,
       duration,
       method,
-      status,
+      status: "pending",
       createdAt: new Date(),
+      stripePaymentIntentId: paymentIntent.id,
     };
     if (reservationId) {
       paiementData.reservationId = reservationId;
@@ -201,19 +217,16 @@ export async function POST(request: NextRequest) {
     const paiement = await prisma.paiement.create({
       data: paiementData,
     });
-    await prisma.parkingSpot.update({
-      where: { parkingSpotId },
-      data: { canReserve: false, isAvailable: false },
-    });
-    // Si une réservation active existe pour ce parkingSpotId, on la passe à cancelled
-    await prisma.reservation.updateMany({
-      where: {
-        parkingSpotId,
-        status: "active",
+
+    return NextResponse.json(
+      {
+        success: true,
+        paiement,
+        clientSecret: paymentIntent.client_secret,
+        message: "PaymentIntent Stripe créé, prêt pour paiement côté client.",
       },
-      data: { status: "cancelled" },
-    });
-    return NextResponse.json({ success: true, paiement }, { status: 201 });
+      { status: 201 }
+    );
   } catch (error) {
     return NextResponse.json(
       {

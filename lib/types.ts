@@ -52,7 +52,7 @@ export interface Paiement {
   reservationId?: string;
   amount: number;
   duration: number; // en minutes
-  method: "credit_card" | "apple_pay" | "google_pay";
+  method: "card";
   status: "pending" | "completed" | "failed";
   createdAt: string;
 }

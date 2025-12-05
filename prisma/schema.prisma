@@ -71,21 +71,16 @@ model Paiement {
   userId         String
   parkingSpotId  String
   reservationId  String?
+  stripePaymentIntentId String?
   amount         Float
   duration       Int
-  method         PaiementMethod
+  method         String @default("card")
   status         PaiementStatus
   createdAt      DateTime    @default(now())
 
   user           User        @relation(fields: [userId], references: [userId])
   reservation    Reservation? @relation(fields: [reservationId], references: [reservationId])
   parkingSpot    ParkingSpot @relation(fields: [parkingSpotId], references: [parkingSpotId])
-}
-
-enum PaiementMethod {  
-  credit_card
-  apple_pay
-  google_pay
 }
 
 enum PaiementStatus {
