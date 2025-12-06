@@ -28,12 +28,10 @@ export async function GET(request: NextRequest) {
     }
 
     // Récupérer l'utilisateur via clerkId
-    const user = await prisma.user.findUnique({
-      where: { clerkId: payload.sub },
-    });
+    const user = await prisma.user.findFirst({ where: { clerkId: payload.sub, deletedAt: null } });
     if (!user) {
       return NextResponse.json(
-        { success: false, error: "Utilisateur non trouvé" },
+        { success: false, error: "Utilisateur non trouvé ou supprimé" },
         { status: 404 }
       );
     }
@@ -106,12 +104,10 @@ export async function POST(request: NextRequest) {
     }
 
     // Récupérer l'utilisateur via clerkId
-    const user = await prisma.user.findUnique({
-      where: { clerkId: payload.sub },
-    });
+    const user = await prisma.user.findFirst({ where: { clerkId: payload.sub, deletedAt: null } });
     if (!user) {
       return NextResponse.json(
-        { success: false, error: "Utilisateur non trouvé" },
+        { success: false, error: "Utilisateur non trouvé ou supprimé" },
         { status: 403 }
       );
     }

@@ -28,12 +28,10 @@ export async function GET(request: NextRequest) {
         { status: 401 }
       );
     }
-    const user = await prisma.user.findUnique({
-      where: { clerkId: payload.sub },
-    });
+    const user = await prisma.user.findFirst({ where: { clerkId: payload.sub, deletedAt: null } });
     if (!user) {
       return NextResponse.json(
-        { success: false, error: "Utilisateur non trouvé" },
+        { success: false, error: "Utilisateur non trouvé ou supprimé" },
         { status: 403 }
       );
     }
@@ -77,23 +75,19 @@ export async function POST(request: NextRequest) {
     }
     const body = await request.json();
     // Vérifie le rôle dans la BDD : si admin, peut créer pour un autre user via clerkId
-    const user = await prisma.user.findUnique({
-      where: { clerkId: payload.sub },
-    });
+    const user = await prisma.user.findFirst({ where: { clerkId: payload.sub, deletedAt: null } });
     if (!user) {
       return NextResponse.json(
-        { success: false, error: "Utilisateur non trouvé" },
+        { success: false, error: "Utilisateur non trouvé ou supprimé" },
         { status: 403 }
       );
     }
     const isAdmin = user.role === "admin";
     const targetClerkId = isAdmin && body.clerkId ? body.clerkId : payload.sub;
-    const targetUser = await prisma.user.findUnique({
-      where: { clerkId: targetClerkId },
-    });
+    const targetUser = await prisma.user.findFirst({ where: { clerkId: targetClerkId, deletedAt: null } });
     if (!targetUser) {
       return NextResponse.json(
-        { success: false, error: "Utilisateur cible non trouvé" },
+        { success: false, error: "Utilisateur cible non trouvé ou supprimé" },
         { status: 403 }
       );
     }

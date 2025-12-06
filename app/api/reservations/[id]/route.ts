@@ -45,16 +45,14 @@ export async function GET(
       );
     }
     // Vérifier l'accès (propriétaire ou admin)
-    const requestingUser = await prisma.user.findUnique({
-      where: { clerkId: payload.sub },
-    });
+    const requestingUser = await prisma.user.findFirst({ where: { clerkId: payload.sub, deletedAt: null } });
     if (
       !requestingUser ||
       (requestingUser.userId !== reservation.userId &&
         requestingUser.role !== "admin")
     ) {
       return NextResponse.json(
-        { success: false, error: "Accès refusé" },
+        { success: false, error: "Accès refusé ou utilisateur supprimé" },
         { status: 403 }
       );
     }
@@ -128,16 +126,14 @@ export async function PATCH(
       );
     }
     // Chercher l'utilisateur
-    const requestingUser = await prisma.user.findUnique({
-      where: { clerkId: payload.sub },
-    });
+    const requestingUser = await prisma.user.findFirst({ where: { clerkId: payload.sub, deletedAt: null } });
     if (
       !requestingUser ||
       (requestingUser.userId !== reservation.userId &&
         requestingUser.role !== "admin")
     ) {
       return NextResponse.json(
-        { success: false, error: "Accès refusé" },
+        { success: false, error: "Accès refusé ou utilisateur supprimé" },
         { status: 403 }
       );
     }

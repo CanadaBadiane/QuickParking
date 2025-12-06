@@ -34,10 +34,10 @@ export async function POST(request: NextRequest) {
         { status: 400 }
       );
     }
-    const user = await prisma.user.findUnique({ where: { email } });
+    const user = await prisma.user.findFirst({ where: { email, deletedAt: null } });
     if (!user) {
       return NextResponse.json(
-        { success: false, error: "Utilisateur non trouvé" },
+        { success: false, error: "Utilisateur non trouvé ou supprimé" },
         { status: 404 }
       );
     }

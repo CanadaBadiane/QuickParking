@@ -25,12 +25,10 @@ export async function GET(request: NextRequest) {
       );
     }
     // Vérification du rôle admin en BDD
-    const user = await prisma.user.findUnique({
-      where: { clerkId: payload.sub },
-    });
+    const user = await prisma.user.findFirst({ where: { clerkId: payload.sub, deletedAt: null } });
     if (!user || user.role !== "admin") {
       return NextResponse.json(
-        { success: false, error: "Accès réservé aux administrateurs" },
+        { success: false, error: "Accès réservé aux administrateurs ou compte supprimé" },
         { status: 403 }
       );
     }

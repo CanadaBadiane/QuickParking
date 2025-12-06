@@ -27,14 +27,14 @@ export async function GET(request: NextRequest) {
     }
     // Vérifie le rôle admin via la base de données
     const clerkId = payload.sub;
-    const user = await prisma.user.findUnique({ where: { clerkId } });
+    const user = await prisma.user.findFirst({ where: { clerkId, deletedAt: null } });
     if (!user || user.role !== "admin") {
       return NextResponse.json(
-        { success: false, error: "Accès réservé aux administrateurs" },
+        { success: false, error: "Accès réservé aux administrateurs ou compte supprimé" },
         { status: 403 }
       );
     }
-    const allUsers = await prisma.user.findMany();
+    const allUsers = await prisma.user.findMany({ where: { deletedAt: null } });
     return NextResponse.json({ success: true, data: allUsers });
   } catch (error) {
     return NextResponse.json(

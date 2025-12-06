@@ -25,11 +25,16 @@ export async function POST(request: NextRequest) {
     const saltRounds = 10;
     const hashedPassword = await bcrypt.hash(plainPassword, saltRounds);
 
-    // Vérifie si l'utilisateur existe déjà
-    const existingUser = await prisma.user.findUnique({ where: { email } });
+    // Vérifie si l'utilisateur existe déjà (email ou clerkId), actif ou supprimé
+    const existingUser = await prisma.user.findFirst({
+      where: { OR: [{ email }, { clerkId }] },
+    });
     if (existingUser) {
       return NextResponse.json(
-        { success: false, error: "Utilisateur déjà existant" },
+        {
+          success: false,
+          error: "Email ou ClerkId déjà utilisé (même supprimé)",
+        },
         { status: 409 }
       );
     }
@@ -57,8 +62,8 @@ export async function POST(request: NextRequest) {
           { status: 401 }
         );
       }
-      const currentUser = await prisma.user.findUnique({
-        where: { clerkId: payload.sub },
+      const currentUser = await prisma.user.findFirst({
+        where: { clerkId: payload.sub, deletedAt: null },
       });
       if (!currentUser || currentUser.role !== "admin") {
         return NextResponse.json(

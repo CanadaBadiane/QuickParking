@@ -28,12 +28,10 @@ export async function GET(
       );
     }
     // Vérifier que le user Clerk existe dans la BDD
-    const user = await prisma.user.findUnique({
-      where: { clerkId: payload.sub },
-    });
+    const user = await prisma.user.findFirst({ where: { clerkId: payload.sub, deletedAt: null } });
     if (!user) {
       return NextResponse.json(
-        { success: false, error: "Utilisateur non trouvé" },
+        { success: false, error: "Utilisateur non trouvé ou supprimé" },
         { status: 403 }
       );
     }

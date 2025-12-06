@@ -28,15 +28,33 @@ export async function GET(
         { status: 401 }
       );
     }
-    const user = await prisma.user.findUnique({ where: { userId: id } });
+
+
+    // Essaie de trouver l'utilisateur par userId ou clerkId, mais seulement s'il n'est pas supprimé
+    let user = await prisma.user.findFirst({
+      where: {
+        OR: [
+          { userId: id },
+          { clerkId: id }
+        ],
+        deletedAt: null
+      }
+    });
+
     if (!user) {
       return NextResponse.json(
-        { success: false, error: "Utilisateur non trouvé" },
+        { success: false, error: "Utilisateur non trouvé ou supprimé" },
         { status: 404 }
       );
     }
+
+    // Récupère l'utilisateur connecté pour vérifier ses permissions
+    const connectedUser = await prisma.user.findUnique({
+      where: { clerkId: payload.sub },
+    });
+
     // Vérifie si l'utilisateur connecté est le bon ou admin
-    if (payload.sub !== user.clerkId && user.role !== "admin") {
+    if (payload.sub !== user.clerkId && connectedUser?.role !== "admin") {
       return NextResponse.json(
         { success: false, error: "Accès refusé" },
         { status: 403 }
@@ -81,14 +99,20 @@ export async function PATCH(
         { status: 401 }
       );
     }
-    const user = await prisma.user.findUnique({ where: { userId: id } });
+    const user = await prisma.user.findFirst({ where: { userId: id, deletedAt: null } });
     if (!user) {
       return NextResponse.json(
-        { success: false, error: "Utilisateur non trouvé" },
+        { success: false, error: "Utilisateur non trouvé ou supprimé" },
         { status: 404 }
       );
     }
-    if (payload.sub !== user.clerkId && user.role !== "admin") {
+
+    // Récupère l'utilisateur connecté pour vérifier ses permissions
+    const connectedUser = await prisma.user.findUnique({
+      where: { clerkId: payload.sub },
+    });
+
+    if (payload.sub !== user.clerkId && connectedUser?.role !== "admin") {
       return NextResponse.json(
         { success: false, error: "Accès refusé" },
         { status: 403 }
@@ -100,8 +124,8 @@ export async function PATCH(
 
     const { userId, clerkId, ...rest } = dataToUpdate;
     dataToUpdate = rest;
-    // Si le user n'est pas admin, on ignore le champ 'role'
-    if ("role" in dataToUpdate && user.role !== "admin") {
+    // Si le user connecté n'est pas admin, on ignore le champ 'role'
+    if ("role" in dataToUpdate && connectedUser?.role !== "admin") {
       const { role, ...restNoRole } = dataToUpdate;
       dataToUpdate = restNoRole;
     }
@@ -148,20 +172,29 @@ export async function DELETE(
         { status: 401 }
       );
     }
-    const user = await prisma.user.findUnique({ where: { userId: id } });
+    const user = await prisma.user.findFirst({ where: { userId: id, deletedAt: null } });
     if (!user) {
       return NextResponse.json(
-        { success: false, error: "Utilisateur non trouvé" },
+        { success: false, error: "Utilisateur non trouvé ou déjà supprimé" },
         { status: 404 }
       );
     }
-    if (payload.sub !== user.clerkId && user.role !== "admin") {
+
+    // Récupère l'utilisateur connecté pour vérifier ses permissions
+    const connectedUser = await prisma.user.findUnique({
+      where: { clerkId: payload.sub },
+    });
+
+    if (payload.sub !== user.clerkId && connectedUser?.role !== "admin") {
       return NextResponse.json(
         { success: false, error: "Accès refusé" },
         { status: 403 }
       );
     }
-    await prisma.user.delete({ where: { userId: id } });
+    await prisma.user.update({
+      where: { userId: id },
+      data: { deletedAt: new Date() },
+    });
     return NextResponse.json({ success: true });
   } catch (error) {
     return NextResponse.json(

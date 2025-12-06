@@ -39,7 +39,8 @@ model User {
   role                 String @default("user")
   password             String
   confirmationPassword String
-  createdAt DateTime @default(now())
+  createdAt            DateTime @default(now())
+  deletedAt            DateTime?
   reservations         Reservation[]
   paiements            Paiement[]
 }
