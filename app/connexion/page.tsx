@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { toast } from "react-hot-toast";
 import { useAuth } from "@clerk/nextjs";
 import AccessDenied from "../components/AccessDenied";
+import Loading from "../components/Loading";
 
 // Page de connexion pour les utilisateurs existants
 export default function ConnexionPage() {
@@ -47,11 +48,7 @@ export default function ConnexionPage() {
 
   // Affiche un loader pendant la vérification de l'authentification
   if (!isLoaded) {
-    return (
-      <div className="flex items-center justify-center h-screen">
-        <div className="text-xl text-gray-600">Chargement...</div>
-      </div>
-    );
+    return <Loading />;
   }
 
   if (!isSignedIn) {

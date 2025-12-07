@@ -1,27 +1,20 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import type { User } from "@/lib/types";
 import { useAuth, useUser } from "@clerk/nextjs";
-import { useSearchParams } from "next/navigation";
+import { useSearchParams, useRouter } from "next/navigation";
 import { toast } from "react-hot-toast";
 import AccessDenied from "../components/AccessDenied";
-
-interface UserProfile {
-  userId: string;
-  clerkId: string;
-  name: string;
-  email: string;
-  phone: string | null;
-  role: string;
-  createdAt: string;
-}
+import Loading from "../components/Loading";
 
 // Page pour afficher et éditer le profil utilisateur
 export default function UserProfilePage() {
   const { isSignedIn, isLoaded, getToken } = useAuth();
   const { user } = useUser();
   const searchParams = useSearchParams();
-  const [profile, setProfile] = useState<UserProfile | null>(null);
+  const router = useRouter();
+  const [profile, setProfile] = useState<User | null>(null);
   const [connectedUserRole, setConnectedUserRole] = useState<string | null>(
     null
   );
@@ -141,9 +134,9 @@ export default function UserProfilePage() {
         toast.success("Compte supprimé avec succès");
         // Redirection selon le rôle du user connecté
         if (connectedUserRole === "admin") {
-          window.location.href = "/allUsers";
+          router.push("/allUsers");
         } else {
-          window.location.href = "/inscription";
+          router.push("/inscription");
         }
       } else {
         toast.error(data.error || "Erreur lors de la suppression");
@@ -154,11 +147,7 @@ export default function UserProfilePage() {
   };
 
   if (!isLoaded || loading) {
-    return (
-      <div className="flex items-center justify-center h-screen">
-        <div className="text-xl text-gray-600">Chargement...</div>
-      </div>
-    );
+    return <Loading />;
   }
 
   if (!isSignedIn) {

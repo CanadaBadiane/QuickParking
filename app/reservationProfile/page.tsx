@@ -1,23 +1,13 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import type { Reservation } from "@/lib/types";
 import { useRouter } from "next/navigation";
 import { useSearchParams } from "next/navigation";
 import { useAuth } from "@clerk/nextjs";
 import { toast } from "react-hot-toast";
 import AccessDenied from "../components/AccessDenied";
 import Loading from "../components/Loading";
-
-interface Reservation {
-  reservationId: string;
-  userId: string;
-  parkingSpotId: string;
-  startDateTime: string;
-  endDateTime: string;
-  status: string;
-  createdAt: string;
-  updatedAt: string;
-}
 
 // Page pour afficher le profil d'une réservation spécifique
 export default function ReservationProfilePage() {

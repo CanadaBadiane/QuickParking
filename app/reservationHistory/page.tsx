@@ -1,21 +1,12 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import type { Reservation } from "@/lib/types";
 import { toast } from "react-hot-toast";
 import { useAuth } from "@clerk/nextjs";
 import { useRouter } from "next/navigation";
 import AccessDenied from "../components/AccessDenied";
 import Loading from "../components/Loading";
-
-interface Reservation {
-  reservationId: string;
-  userId: string;
-  parkingSpotId: string;
-  startDateTime: string;
-  endDateTime: string;
-  status: string;
-  updatedAt: string;
-}
 
 // Page pour afficher l'historique des réservations de l'utilisateur connecté
 export default function ReservationHistoryPage() {

@@ -1,21 +1,13 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import type { Reservation } from "@/lib/types";
 import { toast } from "react-hot-toast";
 import { useAuth } from "@clerk/nextjs";
 import { useRouter } from "next/navigation";
 import AccessDenied from "../components/AccessDenied";
 import AccessDeniedAdmin from "../components/AccessDeniedAdmin";
-
-interface Reservation {
-  reservationId: string;
-  userId: string;
-  parkingSpotId: string;
-  startDateTime: string;
-  endDateTime: string;
-  status: string;
-  createdAt: string;
-}
+import Loading from "../components/Loading";
 
 // Page pour afficher toutes les réservations (accessible uniquement aux admins)
 export default function AllReservationsPage() {
@@ -90,11 +82,7 @@ export default function AllReservationsPage() {
   };
 
   if (!isLoaded || loading) {
-    return (
-      <div className="flex items-center justify-center h-screen">
-        <div className="text-xl text-gray-600">Chargement...</div>
-      </div>
-    );
+    return <Loading />;
   }
 
   if (!isSignedIn) {

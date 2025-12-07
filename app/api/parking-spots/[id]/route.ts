@@ -1,13 +1,33 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
-import { toZonedTime } from "date-fns-tz";
+import { verifyToken } from "@clerk/nextjs/server";
 
 // GET /api/parking-spots/[id] - Récupérer les détails d'une place spécifique
 export async function GET(
-  _request: NextRequest,
+  request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
   const Params = await params;
+  // Authentification utilisateur
+  const authHeader = request.headers.get("authorization");
+  if (!authHeader) {
+    return NextResponse.json(
+      { success: false, error: "Non authentifié" },
+      { status: 401 }
+    );
+  }
+  const token = authHeader.replace("Bearer ", "");
+  let payload;
+  try {
+    payload = await verifyToken(token, {
+      secretKey: process.env.CLERK_SECRET_KEY!,
+    });
+  } catch (e) {
+    return NextResponse.json(
+      { success: false, error: "Token invalide" },
+      { status: 401 }
+    );
+  }
   try {
     // Récupérer le parking spot depuis Prisma
     const parkingSpot = await prisma.parkingSpot.findUnique({
@@ -25,12 +45,12 @@ export async function GET(
     }
 
     // Vérifier les réservations actives pour cette place et mettre à jour leur statut si besoin
-    const nowCanada = toZonedTime(new Date(), "America/Toronto");
+    const nowUTC = new Date();
     await prisma.reservation.updateMany({
       where: {
         parkingSpotId: Params.id,
         status: "active",
-        endDateTime: { lt: nowCanada },
+        endDateTime: { lt: nowUTC },
       },
       data: { status: "completed" },
     });

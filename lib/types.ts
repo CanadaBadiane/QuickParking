@@ -4,10 +4,8 @@ export interface ParkingSpot {
   parkingSpotId: string;
   name: string;
   description: string;
-  coordinates: {
-    lat: number;
-    lng: number;
-  };
+  lat: number;
+  lng: number;
   arrondissement: string;
   pricePerHour: number;
   isAvailable: boolean;
@@ -26,6 +24,7 @@ export interface User {
   role: "admin" | "user";
   password: string;
   confirmationPassword: string;
+  deletedAt?: string | null;
   createdAt: string;
 }
 

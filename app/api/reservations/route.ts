@@ -1,5 +1,3 @@
-// @ts-ignore
-import { toZonedTime } from "date-fns-tz";
 import { NextRequest, NextResponse } from "next/server";
 import { verifyToken } from "@clerk/nextjs/server";
 import { prisma } from "@/lib/prisma";

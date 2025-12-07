@@ -34,11 +34,33 @@ export async function POST(request: NextRequest) {
         { status: 400 }
       );
     }
-    const user = await prisma.user.findFirst({ where: { email, deletedAt: null } });
+    const user = await prisma.user.findFirst({
+      where: { email, deletedAt: null },
+    });
     if (!user) {
       return NextResponse.json(
         { success: false, error: "Utilisateur non trouvé ou supprimé" },
         { status: 404 }
+      );
+    }
+
+    const validConnexion = await prisma.user.findFirst({
+      where: { clerkId: payload.sub, deletedAt: null },
+    });
+    if (!validConnexion) {
+      return NextResponse.json(
+        { success: false, error: "Utilisateur non trouvé ou supprimé" },
+        { status: 404 }
+      );
+    }
+    // Vérifie que l'email du token correspond à celui de la requête
+    if (email != validConnexion?.email) {
+      return NextResponse.json(
+        {
+          success: false,
+          error: "Accès non autorisé, veuillez vérifier vos informations",
+        },
+        { status: 401 }
       );
     }
     const isValid = await bcrypt.compare(password, user.password);

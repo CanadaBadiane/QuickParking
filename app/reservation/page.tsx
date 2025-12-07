@@ -19,6 +19,12 @@ export default function ReservationPage() {
   const router = useRouter();
 
   useEffect(() => {
+    // Préremplir le parkingSpotId si présent dans localStorage
+    const storedId = localStorage.getItem("selectedParkingSpotId");
+    if (storedId) {
+      setParkingSpotId(storedId);
+      localStorage.removeItem("selectedParkingSpotId");
+    }
     const fetchRole = async () => {
       if (!user) return;
       const token = await getToken();

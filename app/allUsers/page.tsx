@@ -1,18 +1,13 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import type { User } from "@/lib/types";
 import { toast } from "react-hot-toast";
 import { useAuth } from "@clerk/nextjs";
 import { useRouter } from "next/navigation";
 import AccessDenied from "../components/AccessDenied";
 import AccessDeniedAdmin from "../components/AccessDeniedAdmin";
-
-interface User {
-  userId: string;
-  name: string;
-  email: string;
-  role: string;
-}
+import Loading from "../components/Loading";
 
 // Page pour afficher tous les utilisateurs (accessible uniquement aux admins)
 export default function AllUsersPage() {
@@ -81,11 +76,7 @@ export default function AllUsersPage() {
 
   // Affiche un loader pendant la vérification de l'authentification
   if (!isLoaded || loading) {
-    return (
-      <div className="flex items-center justify-center h-screen">
-        <div className="text-xl text-gray-600">Chargement...</div>
-      </div>
-    );
+    return <Loading />;
   }
 
   // Affiche AccessDenied si non authentifié
