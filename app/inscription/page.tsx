@@ -5,6 +5,7 @@ import { toast } from "react-hot-toast";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@clerk/nextjs";
 import AccessDenied from "../components/AccessDenied";
+import Loading from "../components/Loading";
 
 // Page d'inscription pour les nouveaux utilisateurs
 export default function InscriptionPage() {
@@ -79,11 +80,7 @@ export default function InscriptionPage() {
 
   // Affiche un loader pendant la vérification de l'authentification
   if (!isLoaded) {
-    return (
-      <div className="flex items-center justify-center h-screen">
-        <div className="text-xl text-gray-600">Chargement...</div>
-      </div>
-    );
+    return <Loading />;
   }
 
   if (!isSignedIn) {

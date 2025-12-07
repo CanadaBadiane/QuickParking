@@ -45,7 +45,9 @@ export async function GET(
       );
     }
     // Vérifier l'accès (propriétaire ou admin)
-    const requestingUser = await prisma.user.findFirst({ where: { clerkId: payload.sub, deletedAt: null } });
+    const requestingUser = await prisma.user.findFirst({
+      where: { clerkId: payload.sub, deletedAt: null },
+    });
     if (
       !requestingUser ||
       (requestingUser.userId !== reservation.userId &&
@@ -126,7 +128,9 @@ export async function PATCH(
       );
     }
     // Chercher l'utilisateur
-    const requestingUser = await prisma.user.findFirst({ where: { clerkId: payload.sub, deletedAt: null } });
+    const requestingUser = await prisma.user.findFirst({
+      where: { clerkId: payload.sub, deletedAt: null },
+    });
     if (
       !requestingUser ||
       (requestingUser.userId !== reservation.userId &&
@@ -137,13 +141,16 @@ export async function PATCH(
         { status: 403 }
       );
     }
+    // Empêcher toute modification si la réservation n'est pas active
+    if (reservation.status !== "active") {
+      return NextResponse.json(
+        { error: "Impossible de modifier une réservation non active." },
+        { status: 400 }
+      );
+    }
     // Mise à jour automatique du statut à 'completed' si la date de fin est dépassée
     const now = new Date();
-    if (
-      reservation.status === "active" &&
-      reservation.endDateTime &&
-      new Date(reservation.endDateTime) < now
-    ) {
+    if (reservation.endDateTime && new Date(reservation.endDateTime) < now) {
       await prisma.reservation.update({
         where: { reservationId: reservation.reservationId },
         data: { status: "completed" },
@@ -169,7 +176,7 @@ export async function PATCH(
         where: { parkingSpotId: reservation.parkingSpotId },
         data: { canReserve: true },
       });
-      return NextResponse.json({ success: true, reservation: updated });
+      return NextResponse.json({ success: true, data: updated });
     }
     const { extraMinutes } = body;
     if (typeof extraMinutes !== "number" || extraMinutes <= 0) {
@@ -195,7 +202,7 @@ export async function PATCH(
       where: { reservationId: id },
       data: { endDateTime: newEnd },
     });
-    return NextResponse.json({ success: true, reservation: updated });
+    return NextResponse.json({ success: true, data: updated });
   } catch (error) {
     return NextResponse.json(
       {

@@ -28,7 +28,9 @@ export async function GET(request: NextRequest) {
     }
 
     // Récupérer l'utilisateur via clerkId
-    const user = await prisma.user.findFirst({ where: { clerkId: payload.sub, deletedAt: null } });
+    const user = await prisma.user.findFirst({
+      where: { clerkId: payload.sub, deletedAt: null },
+    });
     if (!user) {
       return NextResponse.json(
         { success: false, error: "Utilisateur non trouvé ou supprimé" },
@@ -37,7 +39,28 @@ export async function GET(request: NextRequest) {
     }
 
     // Récupérer les réservations de l'utilisateur
-    const reservations = await prisma.reservation.findMany({
+    let reservations = await prisma.reservation.findMany({
+      where: { userId: user.userId },
+    });
+
+    // Mettre à jour les réservations actives dont la date de fin est passée
+    const now = new Date();
+    for (const r of reservations) {
+      if (r.status === "active" && new Date(r.endDateTime) < now) {
+        // Mettre à jour le statut de la réservation
+        await prisma.reservation.update({
+          where: { reservationId: r.reservationId },
+          data: { status: "completed" },
+        });
+        // Mettre à jour le parking spot
+        await prisma.parkingSpot.update({
+          where: { parkingSpotId: r.parkingSpotId },
+          data: { canReserve: true },
+        });
+      }
+    }
+    // Recharger les réservations après update
+    reservations = await prisma.reservation.findMany({
       where: { userId: user.userId },
     });
 
@@ -104,7 +127,9 @@ export async function POST(request: NextRequest) {
     }
 
     // Récupérer l'utilisateur via clerkId
-    const user = await prisma.user.findFirst({ where: { clerkId: payload.sub, deletedAt: null } });
+    const user = await prisma.user.findFirst({
+      where: { clerkId: payload.sub, deletedAt: null },
+    });
     if (!user) {
       return NextResponse.json(
         { success: false, error: "Utilisateur non trouvé ou supprimé" },
@@ -117,24 +142,34 @@ export async function POST(request: NextRequest) {
     // Si admin, peut créer pour un autre user via clerkId
     const isAdmin = user.role === "admin";
     const targetClerkId = isAdmin && clerkId ? clerkId : payload.sub;
-    const targetUser = await prisma.user.findUnique({
-      where: { clerkId: targetClerkId },
+    const targetUser = await prisma.user.findFirst({
+      where: { clerkId: targetClerkId, deletedAt: null },
     });
     if (!targetUser) {
       return NextResponse.json(
-        { success: false, error: "Utilisateur cible non trouvé" },
+        { success: false, error: "Utilisateur cible non trouvé ou supprimé" },
         { status: 403 }
       );
     }
 
-    // Affiche l'heure canadienne (America/Toronto) reçue
-    if (body.endDateTime) {
-      const { toZonedTime } = require("date-fns-tz");
-      const endDateCanada = toZonedTime(
-        new Date(body.endDateTime),
-        "America/Toronto"
+    // Vérifier si le user cible a déjà une réservation active
+    const activeReservation = await prisma.reservation.findFirst({
+      where: {
+        userId: targetUser.userId,
+        status: "active",
+      },
+    });
+    if (activeReservation) {
+      return NextResponse.json(
+        {
+          success: false,
+          error: "Réservation active déjà existante",
+          message: "Cet utilisateur a déjà une réservation en cours.",
+        },
+        { status: 400 }
       );
     }
+
     if (!parkingSpotId || !endDateTime) {
       return NextResponse.json(
         {
@@ -147,10 +182,7 @@ export async function POST(request: NextRequest) {
     }
 
     // startDateTime est toujours maintenant
-    // Heure actuelle en fuseau Canada (America/Toronto)
-    const nowUtc = new Date();
-    const nowCanada = toZonedTime(nowUtc, "America/Toronto");
-    const startDateTime = nowCanada;
+    const startDateTime = new Date();
 
     // Vérifier la disponibilité du parking spot
     let parkingSpot = await prisma.parkingSpot.findUnique({
@@ -216,12 +248,12 @@ export async function POST(request: NextRequest) {
     // Vérifier la contrainte de durée maximale (15 min)
     const end = new Date(endDateTime);
     const duree = (end.getTime() - startDateTime.getTime()) / (1000 * 60);
-    if (duree <= 0) {
+    if (duree < 4.95) {
       return NextResponse.json(
         {
           success: false,
-          error: "Durée invalide",
-          message: "La date de fin doit être après l'heure actuelle.",
+          error: "Durée minimale non atteinte",
+          message: "La réservation doit durer au moins 5 minutes.",
         },
         { status: 400 }
       );
@@ -255,7 +287,7 @@ export async function POST(request: NextRequest) {
     });
 
     return NextResponse.json(
-      { success: true, reservation: newReservation },
+      { success: true, data: newReservation },
       { status: 201 }
     );
   } catch (error) {
