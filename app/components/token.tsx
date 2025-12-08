@@ -32,7 +32,11 @@ export default function ShowToken() {
         maxWidth: 600,
       }}
     >
-      <button onClick={handleShowToken} style={{ marginBottom: 8 }}>
+      <button
+        className="text-black"
+        onClick={handleShowToken}
+        style={{ marginBottom: 8 }}
+      >
         Afficher mon token Clerk
       </button>
       {token && (

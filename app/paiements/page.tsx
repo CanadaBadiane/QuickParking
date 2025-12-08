@@ -8,6 +8,8 @@ import {
   useStripe,
   useElements,
 } from "@stripe/react-stripe-js";
+import Header from "../components/Header";
+import Footer from "../components/Footer";
 
 const stripePromise = loadStripe(
   process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!
@@ -82,26 +84,33 @@ export default function PaiementsPage() {
   }, []);
 
   return (
-    <div className="max-w-lg mx-auto mt-10 p-6 bg-white rounded shadow">
-      <h2 className="text-2xl font-bold mb-6 text-black ">Paiement</h2>
-      {parkingSpotId && (
-        <div className="mb-2 text-black">
-          Place de parking :{" "}
-          <span className="font-semibold">{parkingSpotId}</span>
+    <>
+      <div className="flex flex-col min-h-screen">
+        <Header />
+        <div className="flex-1 flex flex-col max-w-lg mx-auto mt-10 p-6 bg-white rounded shadow">
+          <h2 className="text-2xl font-bold mb-6 text-black ">Paiement</h2>
+          {parkingSpotId && (
+            <div className="mb-2 text-black">
+              Place de parking :{" "}
+              <span className="font-semibold">{parkingSpotId}</span>
+            </div>
+          )}
+          {amount && (
+            <div className="mb-4 text-black">
+              Montant à payer :{" "}
+              <span className="font-semibold">{amount} $</span>
+            </div>
+          )}
+          {clientSecret ? (
+            <Elements stripe={stripePromise} options={{ clientSecret }}>
+              <CheckoutForm />
+            </Elements>
+          ) : (
+            <div className="text-black">Chargement du paiement...</div>
+          )}
         </div>
-      )}
-      {amount && (
-        <div className="mb-4 text-black">
-          Montant à payer : <span className="font-semibold">{amount} $</span>
-        </div>
-      )}
-      {clientSecret ? (
-        <Elements stripe={stripePromise} options={{ clientSecret }}>
-          <CheckoutForm />
-        </Elements>
-      ) : (
-        <div className="text-black">Chargement du paiement...</div>
-      )}
-    </div>
+        <Footer />
+      </div>
+    </>
   );
 }

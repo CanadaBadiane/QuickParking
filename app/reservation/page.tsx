@@ -6,6 +6,8 @@ import { useUser, useAuth } from "@clerk/nextjs";
 import { toast } from "react-hot-toast";
 import Loading from "../components/Loading";
 import { useRouter } from "next/navigation";
+import Header from "../components/Header";
+import Footer from "../components/Footer";
 
 // Page de réservation de place de parking
 export default function ReservationPage() {
@@ -84,56 +86,65 @@ export default function ReservationPage() {
   }
 
   return (
-    <div className="max-w-2xl mx-auto mt-10 p-12 bg-white rounded shadow">
-      <h1 className="text-2xl font-bold mb-6 text-black">
-        Réserver une place de stationnement
-      </h1>
-      <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-        {role === "admin" && (
-          <label className="text-black">
-            Clerk ID (pour admin)
-            <input
-              type="text"
-              value={clerkId}
-              onChange={(e) => setClerkId(e.target.value)}
-              className="w-full p-2 border rounded mt-1 text-black"
-              placeholder="Clerk ID de l'utilisateur"
-            />
-          </label>
-        )}
-        <label className="text-black">
-          Parking Spot ID
-          <input
-            type="text"
-            value={parkingSpotId}
-            onChange={(e) => setParkingSpotId(e.target.value)}
-            className="w-full p-2 border rounded mt-1 text-black"
-            required
-          />
-        </label>
-        <label className="text-black">
-          Durée (minutes)
-          <input
-            type="range"
-            min={5}
-            max={15}
-            step={1}
-            value={duration}
-            onChange={(e) => setDuration(Number(e.target.value))}
-            className="w-full mt-1"
-          />
-          <div className="text-sm mt-2 text-black">
-            Durée sélectionnée : <b className="text-black">{duration} min</b>
+    <>
+      <div className="flex flex-col min-h-screen">
+        <Header />
+        <div className="flex-1 flex items-center justify-center">
+          <div className="max-w-2xl mx-auto mt-10 p-12 bg-white rounded shadow">
+            <h1 className="text-2xl font-bold mb-6 text-black">
+              Réserver une place de stationnement
+            </h1>
+            <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+              {role === "admin" && (
+                <label className="text-black">
+                  Clerk ID (pour admin)
+                  <input
+                    type="text"
+                    value={clerkId}
+                    onChange={(e) => setClerkId(e.target.value)}
+                    className="w-full p-2 border rounded mt-1 text-black"
+                    placeholder="Clerk ID de l'utilisateur"
+                  />
+                </label>
+              )}
+              <label className="text-black">
+                Parking Spot ID
+                <input
+                  type="text"
+                  value={parkingSpotId}
+                  onChange={(e) => setParkingSpotId(e.target.value)}
+                  className="w-full p-2 border rounded mt-1 text-black"
+                  required
+                />
+              </label>
+              <label className="text-black">
+                Durée (minutes)
+                <input
+                  type="range"
+                  min={5}
+                  max={15}
+                  step={1}
+                  value={duration}
+                  onChange={(e) => setDuration(Number(e.target.value))}
+                  className="w-full mt-1"
+                />
+                <div className="text-sm mt-2 text-black">
+                  Durée sélectionnée :{" "}
+                  <b className="text-black">{duration} min</b>
+                </div>
+              </label>
+              <button
+                type="submit"
+                className="bg-blue-600 text-white py-2 rounded hover:bg-blue-700 cursor-pointer disabled:opacity-50"
+                disabled={loading}
+              >
+                {loading ? "Réservation..." : "Réserver"}
+              </button>
+            </form>
           </div>
-        </label>
-        <button
-          type="submit"
-          className="bg-blue-600 text-white py-2 rounded hover:bg-blue-700"
-          disabled={loading}
-        >
-          {loading ? "Réservation..." : "Réserver"}
-        </button>
-      </form>
-    </div>
+        </div>
+        <Footer />
+      </div>
+    </>
   );
 }

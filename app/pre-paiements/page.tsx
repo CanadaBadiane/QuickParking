@@ -4,6 +4,9 @@ import { useRouter } from "next/navigation";
 import { useAuth } from "@clerk/nextjs";
 import { toast } from "react-hot-toast";
 import Loading from "../components/Loading";
+import { useUser } from "@clerk/nextjs";
+import Header from "../components/Header";
+import Footer from "../components/Footer";
 
 // Page pour créer un pré-paiement
 export default function PrePaiementPage() {
@@ -11,6 +14,9 @@ export default function PrePaiementPage() {
   const [duration, setDuration] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const { user } = useUser();
+  const [role, setRole] = useState<string>("");
+  const [clerkId, setClerkId] = useState("");
   const router = useRouter();
   const { getToken, isSignedIn, isLoaded } = useAuth();
 
@@ -19,8 +25,23 @@ export default function PrePaiementPage() {
     const storedId = localStorage.getItem("selectedParkingSpotId");
     if (storedId) {
       setParkingspotId(storedId);
+      localStorage.removeItem("selectedParkingSpotId");
     }
   }, []);
+
+  useEffect(() => {
+    // Récupère le rôle de l'utilisateur
+    const fetchRole = async () => {
+      if (!user) return;
+      const token = await getToken();
+      const res = await fetch(`/api/users/${user.id}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      const data = await res.json();
+      if (data.success) setRole(data.user.role);
+    };
+    fetchRole();
+  }, [user, getToken]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -28,22 +49,27 @@ export default function PrePaiementPage() {
     setError("");
     try {
       const token = await getToken();
+      const body: any = {
+        parkingSpotId: parkingspotId,
+        duration: Number(duration),
+      };
+      if (role === "admin" && clerkId) {
+        body.clerkId = clerkId;
+      }
       const res = await fetch("/api/paiements", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify({
-          parkingSpotId: parkingspotId,
-          duration: Number(duration),
-        }),
+        body: JSON.stringify(body),
       });
       const data = await res.json();
       if (!res.ok)
         toast.error(data?.error || data?.message || "Erreur paiement");
       // Stocke l'ID et le montant dans le localStorage pour la page paiement
       localStorage.setItem("selectedParkingSpotId", parkingspotId);
+      localStorage.removeItem("selectedParkingSpotId");
       if (data.paiement && data.paiement.amount) {
         localStorage.setItem("selectedAmount", String(data.paiement.amount));
       }
@@ -82,39 +108,61 @@ export default function PrePaiementPage() {
   }
 
   return (
-    <div className="max-w-md mx-auto mt-10 p-6 border rounded shadow bg-white text-black">
-      <h2 className="text-xl font-bold mb-4">Créer un paiement</h2>
-      <form onSubmit={handleSubmit} className="space-y-4">
-        <div>
-          <label className="block mb-1">Parking Spot ID</label>
-          <input
-            type="text"
-            value={parkingspotId}
-            onChange={(e) => setParkingspotId(e.target.value)}
-            className="w-full border px-2 py-1 rounded"
-            required
-          />
+    <>
+      <div className="flex flex-col min-h-screen">
+        <Header />
+        <div className="flex-1 flex items-center justify-center">
+          <div className="max-w-lg w-full p-6 border rounded shadow bg-white text-black">
+            <h2 className="text-xl font-bold mb-4">Créer un paiement</h2>
+            <form onSubmit={handleSubmit} className="space-y-4">
+              <div>
+                <label className="block mb-1">Parking Spot ID</label>
+                <input
+                  type="text"
+                  value={parkingspotId}
+                  onChange={(e) => setParkingspotId(e.target.value)}
+                  className="w-full border px-2 py-1 rounded"
+                  required
+                />
+              </div>
+              {role === "admin" && (
+                <div>
+                  <label className="block mb-1">
+                    Clerk ID de l'utilisateur cible
+                  </label>
+                  <input
+                    type="text"
+                    value={clerkId}
+                    onChange={(e) => setClerkId(e.target.value)}
+                    className="w-full border px-2 py-1 rounded"
+                    placeholder="clerkId de l'utilisateur"
+                  />
+                </div>
+              )}
+              <div>
+                <label className="block mb-1">Durée (minutes)</label>
+                <input
+                  type="number"
+                  value={duration}
+                  onChange={(e) => setDuration(e.target.value)}
+                  className="w-full border px-2 py-1 rounded"
+                  required
+                  min={10}
+                />
+              </div>
+              {error && <div className="text-red-500">{error}</div>}
+              <button
+                type="submit"
+                className="bg-blue-600 text-white px-4 py-2 rounded cursor-pointer hover:bg-blue-700 disabled:opacity-50"
+                disabled={loading}
+              >
+                {loading ? "Création..." : "Créer le paiement"}
+              </button>
+            </form>
+          </div>
         </div>
-        <div>
-          <label className="block mb-1">Durée (minutes)</label>
-          <input
-            type="number"
-            value={duration}
-            onChange={(e) => setDuration(e.target.value)}
-            className="w-full border px-2 py-1 rounded"
-            required
-            min={10}
-          />
-        </div>
-        {error && <div className="text-red-500">{error}</div>}
-        <button
-          type="submit"
-          className="bg-blue-600 text-white px-4 py-2 rounded"
-          disabled={loading}
-        >
-          {loading ? "Création..." : "Créer le paiement"}
-        </button>
-      </form>
-    </div>
+        <Footer />
+      </div>
+    </>
   );
 }

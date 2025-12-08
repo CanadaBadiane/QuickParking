@@ -8,6 +8,8 @@ import { useRouter } from "next/navigation";
 import AccessDenied from "../components/AccessDenied";
 import AccessDeniedAdmin from "../components/AccessDeniedAdmin";
 import Loading from "../components/Loading";
+import Header from "../components/Header";
+import Footer from "../components/Footer";
 
 // Page pour afficher tous les utilisateurs (accessible uniquement aux admins)
 export default function AllUsersPage() {
@@ -90,54 +92,58 @@ export default function AllUsersPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <h1 className="text-3xl font-bold text-gray-900 mb-8">
-          Liste des utilisateurs
-        </h1>
+    <>
+      <Header />
+      <div className="min-h-screen py-8">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <h1 className="text-3xl font-bold text-white mb-8">
+            Liste des utilisateurs
+          </h1>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {users.map((user) => (
-            <div
-              key={user.userId}
-              onClick={() => handleUserClick(user.userId)}
-              className={`bg-white rounded-lg shadow p-6 hover:shadow-lg transition-shadow cursor-pointer ${
-                selectedUserId === user.userId ? "ring-2 ring-blue-500" : ""
-              }`}
-            >
-              <h2 className="text-xl font-semibold text-gray-900 mb-3">
-                {user.name}
-              </h2>
-              <div className="space-y-2 text-gray-600">
-                <p>
-                  <span className="font-medium">ID:</span> {user.userId}
-                </p>
-                <p>
-                  <span className="font-medium">Email:</span> {user.email}
-                </p>
-                <p>
-                  <span className="font-medium">Rôle:</span>{" "}
-                  <span
-                    className={`px-2 py-1 rounded text-sm ${
-                      user.role === "admin"
-                        ? "bg-red-100 text-red-800"
-                        : "bg-blue-100 text-blue-800"
-                    }`}
-                  >
-                    {user.role}
-                  </span>
-                </p>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {users.map((user) => (
+              <div
+                key={user.userId}
+                onClick={() => handleUserClick(user.userId)}
+                className={`bg-white rounded-lg shadow p-6 hover:shadow-lg hover:bg-gradient-to-br hover:from-purple-200 hover:to-purple-400 cursor-pointer ${
+                  selectedUserId === user.userId ? "ring-2 ring-blue-500" : ""
+                }`}
+              >
+                <h2 className="text-xl font-semibold text-gray-900 mb-3">
+                  {user.name}
+                </h2>
+                <div className="space-y-2 text-gray-600">
+                  <p>
+                    <span className="font-medium">ID:</span> {user.userId}
+                  </p>
+                  <p>
+                    <span className="font-medium">Email:</span> {user.email}
+                  </p>
+                  <p>
+                    <span className="font-medium">Rôle:</span>{" "}
+                    <span
+                      className={`px-2 py-1 rounded text-sm ${
+                        user.role === "admin"
+                          ? "bg-red-100 text-red-800"
+                          : "bg-blue-100 text-blue-800"
+                      }`}
+                    >
+                      {user.role}
+                    </span>
+                  </p>
+                </div>
               </div>
-            </div>
-          ))}
-        </div>
-
-        {users.length === 0 && (
-          <div className="text-center text-gray-500 mt-8">
-            Aucun utilisateur trouvé
+            ))}
           </div>
-        )}
+
+          {users.length === 0 && (
+            <div className="text-center text-2xl text-black mt-8">
+              Aucun utilisateur trouvé
+            </div>
+          )}
+        </div>
       </div>
-    </div>
+      <Footer />
+    </>
   );
 }
