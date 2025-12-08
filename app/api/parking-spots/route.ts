@@ -29,6 +29,45 @@ export async function GET(request: NextRequest) {
     // Pour chaque parking, on récupère la dernière réservation (endDateTime la plus récente)
     const updatedSpots = await Promise.all(
       parkingSpots.map(async (spot) => {
+        // Met à jour le statut des réservations actives expirées pour ce parking
+        const activeReservations = await prisma.reservation.findMany({
+          where: {
+            parkingSpotId: spot.parkingSpotId,
+            status: "active",
+            endDateTime: { lt: new Date() },
+          },
+        });
+        for (const res of activeReservations) {
+          await prisma.reservation.update({
+            where: { reservationId: res.reservationId },
+            data: { status: "completed" },
+          });
+        }
+        // Vérifie s'il y a un paiement pending
+        const paiementPending = await prisma.paiement.findFirst({
+          where: {
+            parkingSpotId: spot.parkingSpotId,
+            status: "pending",
+          },
+          orderBy: { createdAt: "desc" },
+        });
+        let forceFalse = false;
+        if (paiementPending) {
+          const nowMs = Date.now();
+          const createdAtMs = new Date(paiementPending.createdAt).getTime();
+          if (nowMs - createdAtMs < 600000) {
+            forceFalse = true;
+            await prisma.parkingSpot.update({
+              where: { parkingSpotId: spot.parkingSpotId },
+              data: { canReserve: false, isAvailable: false },
+            });
+          } else {
+            await prisma.parkingSpot.update({
+              where: { parkingSpotId: spot.parkingSpotId },
+              data: { canReserve: true, isAvailable: true },
+            });
+          }
+        }
         // Récupère la dernière réservation
         const lastReservation = await prisma.reservation.findFirst({
           where: { parkingSpotId: spot.parkingSpotId },
@@ -55,6 +94,10 @@ export async function GET(request: NextRequest) {
         }
         let canReserve = true;
         let isAvailable = true;
+        if (forceFalse) {
+          canReserve = false;
+          isAvailable = false;
+        }
         if (lastEndDate) {
           const isPast = lastEndDate < now;
           canReserve = isPast ? true : false;

@@ -51,12 +51,12 @@ export default function Home() {
 
   // Affichage conditionnel selon le rôle de la BDD
   return (
-    <div className="min-h-screen ">
+    <div className="flex flex-col min-h-screen ">
       {/* Navbar */}
       <Header />
 
       {/* Contenu principal */}
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <main className="flex-1 flex max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="bg-white rounded-lg shadow p-6 mb-6">
           {roleBdd === "user" ? (
             <>
@@ -203,14 +203,6 @@ export default function Home() {
               </div>{" "}
             </>
           ) : null}
-        </div>
-
-        {/* Token pour les tests */}
-        <div className="bg-white rounded-lg shadow p-6">
-          <h3 className="text-xl font-semibold text-gray-900 mb-4">
-            Token de test
-          </h3>
-          <ShowToken />
         </div>
       </main>
       <Footer />

@@ -1,0 +1,2040 @@
+{
+	"info": {
+		"_postman_id": "250bd50e-23fb-4cf5-8504-125c1d0c0373",
+		"name": "QuickParking",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "46408511",
+		"_collection_link": "https://me1111-8471.postman.co/workspace/Service-web~4defa85b-e6ad-476e-a496-22a5fba0da33/collection/46408511-250bd50e-23fb-4cf5-8504-125c1d0c0373?action=share&source=collection_link&creator=46408511"
+	},
+	"item": [
+		{
+			"name": "Création d'un user",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJSUzI1NiIsImNhdCI6ImNsX0I3ZDRQRDExMUFBQSIsImtpZCI6Imluc18zNjJoN2thN0NXMk50eHpmNFlhNFlSRGo4aW4iLCJ0eXAiOiJKV1QifQ.eyJhenAiOiJodHRwOi8vbG9jYWxob3N0OjMwMDAiLCJleHAiOjE3NjUxODQ2MjAsImZ2YSI6WzIsLTFdLCJpYXQiOjE3NjUxODQ1NjAsImlzcyI6Imh0dHBzOi8vY2xhc3NpYy1mb3gtMjkuY2xlcmsuYWNjb3VudHMuZGV2IiwibmJmIjoxNzY1MTg0NTUwLCJzaWQiOiJzZXNzXzM2WVhIZ2kzcEhxdjlSQmdVYkJVTVliOG9PeSIsInN0cyI6ImFjdGl2ZSIsInN1YiI6InVzZXJfMzZKWXVWRzQ4dXZjVGp1bHZwVDMzSDRXQTNqIiwidiI6Mn0.lhpHXYcOVLjC82Nwh4iMcHPY5qh-0N735q4MvK5q1zF2mMTFA22Q28W1BetxHZXjm59g68fJFcNGyo9tkdgqbUIHaPSo-5r6-ldeyRCefHnJb1HT_6nDetsMyP82nRPbW2spQBuYlATMjylun81r3dKwqJ1mwZyZLwn-ymNuvo4dcMkK2cMh8GSNa_2D0W_S862-mR0JawksI-YBtAAUGWBjWO3hdzMEcbGiQ4Ns-_aNP_8dy_l6urEkoHezpH6a33lVVUFFv0s2pGbjUHCmVaMkupIwQjyYKx88uc07EdGyaLhfoksoJb1aWZ9fD969jqRG7W_TbOnXJNyjTdY5Mg",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"name\": \"Happy\",\r\n  \"email\": \"happy@example.com\",\r\n  \"phone\": \"5141234567\",\r\n  \"password\": \"Lafleurerouge1\",\r\n  \"confirmationPassword\": \"Lafleurerouge1\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:3000/api/users",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"users"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Connexion d'un user",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJSUzI1NiIsImNhdCI6ImNsX0I3ZDRQRDExMUFBQSIsImtpZCI6Imluc18zNjJoN2thN0NXMk50eHpmNFlhNFlSRGo4aW4iLCJ0eXAiOiJKV1QifQ.eyJhenAiOiJodHRwOi8vbG9jYWxob3N0OjMwMDAiLCJleHAiOjE3NjUxODU0NzAsImZ2YSI6WzE2LC0xXSwiaWF0IjoxNzY1MTg1NDEwLCJpc3MiOiJodHRwczovL2NsYXNzaWMtZm94LTI5LmNsZXJrLmFjY291bnRzLmRldiIsIm5iZiI6MTc2NTE4NTQwMCwic2lkIjoic2Vzc18zNllYSGdpM3BIcXY5UkJnVWJCVU1ZYjhvT3kiLCJzdHMiOiJhY3RpdmUiLCJzdWIiOiJ1c2VyXzM2Sll1Vkc0OHV2Y1RqdWx2cFQzM0g0V0EzaiIsInYiOjJ9.o8lxv_SEDqGgXy2z81HD23lrPRM_oLx7Y04u4Rk7eRwqsyL1pcNxRuQtu_FAWsfA1t1Ik1bhiZu8lY4bSLQ0HyM43JmfkI10sPNMJaGJAGGdLkmg-4_Q-mSYopNtLt6vrp4OMXigWlgL024oEInIFzkT6gl31w9jUGlwkotyjVIFoxEd1nRmpsQiQgysLh_AnG9G1NMai9DVPjrrqh6jYbg9PHW85cLYIMXp_PQRgNN8NajLNb2waJFdDNMNsrGUmU81yU8CU8KTPHsZcWeJr5tNsHyfXiG9u0lDBXIEpPIVtRBwKv60MlAl5zvUKDZ7ygTVhgc-M0yEqN05Ynu15g",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"email\": \"happy@example.com\",\r\n  \"password\": \"Lafleurerouge1\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:3000/api/users/login",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"users",
+						"login"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Profil d'un user",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJSUzI1NiIsImNhdCI6ImNsX0I3ZDRQRDExMUFBQSIsImtpZCI6Imluc18zNjJoN2thN0NXMk50eHpmNFlhNFlSRGo4aW4iLCJ0eXAiOiJKV1QifQ.eyJhenAiOiJodHRwOi8vbG9jYWxob3N0OjMwMDAiLCJleHAiOjE3NjUxODU2MDMsImZ2YSI6WzE5LC0xXSwiaWF0IjoxNzY1MTg1NTQzLCJpc3MiOiJodHRwczovL2NsYXNzaWMtZm94LTI5LmNsZXJrLmFjY291bnRzLmRldiIsIm5iZiI6MTc2NTE4NTUzMywic2lkIjoic2Vzc18zNllYSGdpM3BIcXY5UkJnVWJCVU1ZYjhvT3kiLCJzdHMiOiJhY3RpdmUiLCJzdWIiOiJ1c2VyXzM2Sll1Vkc0OHV2Y1RqdWx2cFQzM0g0V0EzaiIsInYiOjJ9.JcrPeBW35Szy8WwfVckvVuV-Et6ZJ9foB-AVoNaVauZ9HnvVi71MDll7nsABvcX3hEG42UH4yvZpPDIjl5DQrambPySFznuQcV4PrVejdwurxsIU7W_G9XvEj2iwcSxGslun3i9x2HZCHcSwIWGC94v-FxZILhXDZM4okC3Y3AbaWzrPZgFQWRzZAU21ZZNxVAzXk4ChYzEhXBWtin6unf3ylVFBUCWL0OhErzSSLsQxdvQmkIhcCeCIoAejqMcpUlgCGaXdSoplTlh0fblPsyKNVfqmrHbDJ98cZqqj5N-t3HvXoeZ5MEmLFFrL3qSHJKhTbLL686D8D8MRdXsX-w",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"email\": \"happy@example.com\",\r\n  \"password\": \"Lafleurerouge1\"\r\n}"
+				},
+				"url": {
+					"raw": "http://localhost:3000/api/users/cmiwxbloz0003cklrfo2rjwgk",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"users",
+						"cmiwxbloz0003cklrfo2rjwgk"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Modification de certains champs du user",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJSUzI1NiIsImNhdCI6ImNsX0I3ZDRQRDExMUFBQSIsImtpZCI6Imluc18zNjJoN2thN0NXMk50eHpmNFlhNFlSRGo4aW4iLCJ0eXAiOiJKV1QifQ.eyJhenAiOiJodHRwOi8vbG9jYWxob3N0OjMwMDAiLCJleHAiOjE3NjUxODU4OTQsImZ2YSI6WzI0LC0xXSwiaWF0IjoxNzY1MTg1ODM0LCJpc3MiOiJodHRwczovL2NsYXNzaWMtZm94LTI5LmNsZXJrLmFjY291bnRzLmRldiIsIm5iZiI6MTc2NTE4NTgyNCwic2lkIjoic2Vzc18zNllYSGdpM3BIcXY5UkJnVWJCVU1ZYjhvT3kiLCJzdHMiOiJhY3RpdmUiLCJzdWIiOiJ1c2VyXzM2Sll1Vkc0OHV2Y1RqdWx2cFQzM0g0V0EzaiIsInYiOjJ9.meL6H0WvXhK49pV9J_HC4ZLs3rRMxw3hQ0DaVG_Q_AYLB0Vdt3wNCCmEEVNlpJ2iLXPTje8NNbgqumrBVCs5ZklP-hm9cPeiY-EWlAsUQkD4c6mSbnIz8_ZiL_RVMhSpus5JGH7jnk87BhA-jxK-06xavDtKMngCIkZ5Q-fmPTJUVMvnpI6bCilvzEYhqFtMUP302PS4q5lAkS75Eeja53-3K7rkCvM2VwYrfDDJx0ekJhwqbjEYzGRuogBEbABclYNWymHw_i1tRJf8z7YcKX6oC1yL4nqQ9ffsNHgbWRcpcWvULIi-T3cIVQXOes6HLWy7oGdmYJ_gbk86PkZAWA",
+							"type": "string"
+						}
+					]
+				},
+				"method": "PATCH",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"email\": \"happy1@example.com\",\r\n  \"phone\": \"5148597854\"\r\n}"
+				},
+				"url": {
+					"raw": "http://localhost:3000/api/users/cmiwxbloz0003cklrfo2rjwgk",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"users",
+						"cmiwxbloz0003cklrfo2rjwgk"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Suppression d'un user",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJSUzI1NiIsImNhdCI6ImNsX0I3ZDRQRDExMUFBQSIsImtpZCI6Imluc18zNjJoN2thN0NXMk50eHpmNFlhNFlSRGo4aW4iLCJ0eXAiOiJKV1QifQ.eyJhenAiOiJodHRwOi8vbG9jYWxob3N0OjMwMDAiLCJleHAiOjE3NjUxODU5OTMsImZ2YSI6WzI1LC0xXSwiaWF0IjoxNzY1MTg1OTMzLCJpc3MiOiJodHRwczovL2NsYXNzaWMtZm94LTI5LmNsZXJrLmFjY291bnRzLmRldiIsIm5iZiI6MTc2NTE4NTkyMywic2lkIjoic2Vzc18zNllYSGdpM3BIcXY5UkJnVWJCVU1ZYjhvT3kiLCJzdHMiOiJhY3RpdmUiLCJzdWIiOiJ1c2VyXzM2Sll1Vkc0OHV2Y1RqdWx2cFQzM0g0V0EzaiIsInYiOjJ9.Wd69ujDYTxSK5x450aP4dH0wI1T1pRu7jp-hbJxZKLL3kM7E0f0qZDivnGuCjqDGsR5qtgg-d6jT8R4S-2IMH0bHJTSmEJuHDbWLOLwFGrlEQTV7MF3oL-PNDgq_Cj_53omzDFlffcLIyNMGagrrAtaZ-YND_C_LwLGpvG_vvuNvysd-G4C94Y4LmzkygNaMI7fREvV5lSyURhPXF0_hzJp72nCplvgHy1h9Uu7mCnSbF2lxEsMTELmmDuhHKziitKB-XsrmG1ALYb_HdybntdaQrl_YMjuv6ZnKx79QVMIs8D2InJKG3bmHUbpLQ8JXq1ddt_JvThzX11UQoIbcOw",
+							"type": "string"
+						}
+					]
+				},
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"email\": \"happy1@example.com\",\r\n  \"phone\": \"5148597854\"\r\n}"
+				},
+				"url": {
+					"raw": "http://localhost:3000/api/users/cmiwxbloz0003cklrfo2rjwgk",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"users",
+						"cmiwxbloz0003cklrfo2rjwgk"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Création d'un user (erreur)",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJSUzI1NiIsImNhdCI6ImNsX0I3ZDRQRDExMUFBQSIsImtpZCI6Imluc18zNjJoN2thN0NXMk50eHpmNFlhNFlSRGo4aW4iLCJ0eXAiOiJKV1QifQ.eyJhenAiOiJodHRwOi8vbG9jYWxob3N0OjMwMDAiLCJleHAiOjE3NjUxODYxNTksImZ2YSI6WzI4LC0xXSwiaWF0IjoxNzY1MTg2MDk5LCJpc3MiOiJodHRwczovL2NsYXNzaWMtZm94LTI5LmNsZXJrLmFjY291bnRzLmRldiIsIm5iZiI6MTc2NTE4NjA4OSwic2lkIjoic2Vzc18zNllYSGdpM3BIcXY5UkJnVWJCVU1ZYjhvT3kiLCJzdHMiOiJhY3RpdmUiLCJzdWIiOiJ1c2VyXzM2Sll1Vkc0OHV2Y1RqdWx2cFQzM0g0V0EzaiIsInYiOjJ9.PgdHu5ZoxUwpDhaWuNrLJhiWyMPSidW1R0S581jzyib4iipKqXKSQPGzgq42sSWhDIodi50HrAGSQE7ZHpCTBg6eq2hEQ0p6YQ5pnasGmilsr8JoizmcecNbkzVcSeVuYQfu2hqF4Zg2_0kiCYMa83HTgAOodhl6uw3agSJwoNErFmPiSBhvyziceO1Gh778INMMQ8gyVz4xHReCSJ7FA-tPNFUh5auOy8TJJW3TcVnP6R_UWr12UZrEG_rdb3bbO9jltkH_I05BbU5mUsgxHNaEpiYzZjnfpp2TqwtR4jvcgtAxgtgCC8uHf3C6xCYO98v-kmRrA0DcqKqmvpru7Q",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"email\": \"happy1@example.com\",\r\n  \"phone\": \"5148597854\"\r\n}"
+				},
+				"url": {
+					"raw": "http://localhost:3000/api/users",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"users"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Création d'un user (erreur)",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n        \"name\": \"Happy\",\r\n        \"email\": \"happy@example.com\",\r\n        \"phone\": \"5141234567\",\r\n        \"password\": \"$2b$10$RUm0hN7PGIYow4x6C3v12.1iBto5jzuzn.n/DLj57eb7gkx7XoqZu\",\r\n        \"confirmationPassword\": \"$2b$10$RUm0hN7PGIYow4x6C3v12.1iBto5jzuzn.n/DLj57eb7gkx7XoqZu\",\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:3000/api/users",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"users"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Connexion d'un user (erreur)",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJSUzI1NiIsImNhdCI6ImNsX0I3ZDRQRDExMUFBQSIsImtpZCI6Imluc18zNjJoN2thN0NXMk50eHpmNFlhNFlSRGo4aW4iLCJ0eXAiOiJKV1QifQ.eyJhenAiOiJodHRwOi8vbG9jYWxob3N0OjMwMDAiLCJleHAiOjE3NjUxODY2MTQsImZ2YSI6WzAsLTFdLCJpYXQiOjE3NjUxODY1NTQsImlzcyI6Imh0dHBzOi8vY2xhc3NpYy1mb3gtMjkuY2xlcmsuYWNjb3VudHMuZGV2IiwibmJmIjoxNzY1MTg2NTQ0LCJzaWQiOiJzZXNzXzM2WWJlQUo4S3d4UFZnZ0dUaXB1MEdmeDJUNSIsInN0cyI6ImFjdGl2ZSIsInN1YiI6InVzZXJfMzZKRkJpVTBMbGVxSDgxNXhKSUNZb0NCdTdzIiwidiI6Mn0.Gk9-KzaQ6F0ugEn_Xc1WYlB_bQ3qZvI0OTl7RPd_sdnadw0mv5S3QFYEYu_aonjFcTVP4Si1s9tcE6SbhLI-k83PYFOwsRxiz2FmpEdrrZBivlj1l1JXYiDgxlVxQsT4OpBTzBOdGjOYfEKwCVty-znk4gElme69QtTyUAwS4WieJqYWni90UR53RnM0rMRfzHqE4XnSciXCXssnhGDkAOwBwHzmEMlWCOoqrLDUKESV9MBMj_OlWUmk6S1FkZymnB_XvlLEOkY0n8m7XPJ85NOBRi3Svg-rzpKEOAx4eLTmPuDpnNJLP-DJTWyLeFXmVNphVXE7RLyX482orBNMaA",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n        \"email\": \"natsu@hotmail.com\",\r\n        \"password\": \"salut5\"\r\n}"
+				},
+				"url": {
+					"raw": "http://localhost:3000/api/users/login",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"users",
+						"login"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Connexion d'un user (erreur)",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n        \"email\": \"natsu@hotmail.com\",\r\n        \"password\": \"Jeadore8$\"\r\n}"
+				},
+				"url": {
+					"raw": "http://localhost:3000/api/users/login",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"users",
+						"login"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Recherche d'un utilisateur inexistant",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJSUzI1NiIsImNhdCI6ImNsX0I3ZDRQRDExMUFBQSIsImtpZCI6Imluc18zNjJoN2thN0NXMk50eHpmNFlhNFlSRGo4aW4iLCJ0eXAiOiJKV1QifQ.eyJhenAiOiJodHRwOi8vbG9jYWxob3N0OjMwMDAiLCJleHAiOjE3NjUxODY4NjUsImZ2YSI6WzQsLTFdLCJpYXQiOjE3NjUxODY4MDUsImlzcyI6Imh0dHBzOi8vY2xhc3NpYy1mb3gtMjkuY2xlcmsuYWNjb3VudHMuZGV2IiwibmJmIjoxNzY1MTg2Nzk1LCJzaWQiOiJzZXNzXzM2WWJlQUo4S3d4UFZnZ0dUaXB1MEdmeDJUNSIsInN0cyI6ImFjdGl2ZSIsInN1YiI6InVzZXJfMzZKRkJpVTBMbGVxSDgxNXhKSUNZb0NCdTdzIiwidiI6Mn0.r3dLiEeqjIjJcO3-sD1q7To85tO5QY_Kd-hV1pBASRJpHrIcUw38k7YIdIw96NgiHU_r5vZXiBx3_DK_2u3L0ZNpLgesw8nj-XTTPxDmnEuJOKPy_-CvTY5d7OF-nuVlNQTQdMapYOavAfSHihUNDv6u-m3w-S4UqGXAV8QEMAWo_aAlGCadrejwBkgDrOIoR6uuBvZ_jst1rzSXweMeoeFFwTkhWHvEguJd6Ufj9Bm7ul5C9giLXbLdJRtgc113rnWfsMF7__LQPjQ9hu6MuUEVDSg6HUqRP-pCfInxWYi30CLx4oTzNTEVcU2Ldo7UrYvCYnNmB7y15Nngs6cGgg",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n        \"email\": \"natsu@hotmail.com\",\r\n        \"password\": \"Jeadore8$\"\r\n}"
+				},
+				"url": {
+					"raw": "http://localhost:3000/api/users/7487487487894jnmnnfbdf",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"users",
+						"7487487487894jnmnnfbdf"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Accéder au profil d'un autre user",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJSUzI1NiIsImNhdCI6ImNsX0I3ZDRQRDExMUFBQSIsImtpZCI6Imluc18zNjJoN2thN0NXMk50eHpmNFlhNFlSRGo4aW4iLCJ0eXAiOiJKV1QifQ.eyJhenAiOiJodHRwOi8vbG9jYWxob3N0OjMwMDAiLCJleHAiOjE3NjUxODY5MzcsImZ2YSI6WzUsLTFdLCJpYXQiOjE3NjUxODY4NzcsImlzcyI6Imh0dHBzOi8vY2xhc3NpYy1mb3gtMjkuY2xlcmsuYWNjb3VudHMuZGV2IiwibmJmIjoxNzY1MTg2ODY3LCJzaWQiOiJzZXNzXzM2WWJlQUo4S3d4UFZnZ0dUaXB1MEdmeDJUNSIsInN0cyI6ImFjdGl2ZSIsInN1YiI6InVzZXJfMzZKRkJpVTBMbGVxSDgxNXhKSUNZb0NCdTdzIiwidiI6Mn0.dhmedJbOb-qYxeQ5LCTRLgQYolbaOhGFDDfRK8ZqCbfRU8Jo4AGk9fociRJG9P20nJ0QGeYiaIxs066zsqaKZtrti93a3mmvfafSGTNQwEgH-IK6otlcXNaeItJMo9jTuvQM6d54QYLlucPRaUMrWPBi8IKnEsOwJ7q_E7SCNefA06lPEasmhzW0hF_B5S8-as176c7crZ4BGJXLl-lEXEqVWgruRUAp4v6pHkacfXC-9FypX27Aq4J1xy565L1YZfDhttmTRTgLW-bme5Unfc0siIbBRW0Y40j22i9wtVAx4o5v6QMZ-qjK5KBrWFwDhNU6l6kg07j1VhRUAZr6zw",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"email\": \"happy1@example.com\",\r\n  \"phone\": \"5148597854\"\r\n}"
+				},
+				"url": {
+					"raw": "http://localhost:3000/api/users/cmiwxbloz0003cklrfo2rjwgk",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"users",
+						"cmiwxbloz0003cklrfo2rjwgk"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Modifier le profil d'un autre user",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJSUzI1NiIsImNhdCI6ImNsX0I3ZDRQRDExMUFBQSIsImtpZCI6Imluc18zNjJoN2thN0NXMk50eHpmNFlhNFlSRGo4aW4iLCJ0eXAiOiJKV1QifQ.eyJhenAiOiJodHRwOi8vbG9jYWxob3N0OjMwMDAiLCJleHAiOjE3NjUxODcwODIsImZ2YSI6WzcsLTFdLCJpYXQiOjE3NjUxODcwMjIsImlzcyI6Imh0dHBzOi8vY2xhc3NpYy1mb3gtMjkuY2xlcmsuYWNjb3VudHMuZGV2IiwibmJmIjoxNzY1MTg3MDEyLCJzaWQiOiJzZXNzXzM2WWJlQUo4S3d4UFZnZ0dUaXB1MEdmeDJUNSIsInN0cyI6ImFjdGl2ZSIsInN1YiI6InVzZXJfMzZKRkJpVTBMbGVxSDgxNXhKSUNZb0NCdTdzIiwidiI6Mn0.khOJV1Q6Tywr_ponavbSnhDSzebUpEJzxLLJjoQWs4unKGNiZFbFieMM8jajvXmhTO6ili-9hQc7ax9TGQnUjjaXCfooGBMIQtyUzAerV0E1Gzvpv-Dt-A--276vN1OMI5TIeixY7lKNvsaLgbuncgTapX5uQ3thiTYQAV9rp7kiuTSFMEddVZsdkhMjaQz_YhkLEOLOZAqkozScxsoShTQKrzt6o68VElt6QtVhRAPnBU-u23LR1UDBwShiYvb6eimO6Mie0--yQMhu8JcUriA4SrAePuLAyp2f-XNYZAMEK56sK-htiTV6zk55y5enBcy0pG_bheBhw8ZAyysIzA",
+							"type": "string"
+						}
+					]
+				},
+				"method": "PATCH",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"email\": \"happy2@example.com\",\r\n  \"phone\": \"5148597854\"\r\n}"
+				},
+				"url": {
+					"raw": "http://localhost:3000/api/users/cmiwxbloz0003cklrfo2rjwgk",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"users",
+						"cmiwxbloz0003cklrfo2rjwgk"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Modifier un champs réserver aux admins",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJSUzI1NiIsImNhdCI6ImNsX0I3ZDRQRDExMUFBQSIsImtpZCI6Imluc18zNjJoN2thN0NXMk50eHpmNFlhNFlSRGo4aW4iLCJ0eXAiOiJKV1QifQ.eyJhenAiOiJodHRwOi8vbG9jYWxob3N0OjMwMDAiLCJleHAiOjE3NjUxODcxODIsImZ2YSI6WzksLTFdLCJpYXQiOjE3NjUxODcxMjIsImlzcyI6Imh0dHBzOi8vY2xhc3NpYy1mb3gtMjkuY2xlcmsuYWNjb3VudHMuZGV2IiwibmJmIjoxNzY1MTg3MTEyLCJzaWQiOiJzZXNzXzM2WWJlQUo4S3d4UFZnZ0dUaXB1MEdmeDJUNSIsInN0cyI6ImFjdGl2ZSIsInN1YiI6InVzZXJfMzZKRkJpVTBMbGVxSDgxNXhKSUNZb0NCdTdzIiwidiI6Mn0.SaTQpVuMCGT15B7rs-tYSlCVlz6WY1qzWoWp7wj1ESHy8KBFJSK0Z1WMPO5amMIDeB0Fe33uR3lVi21K5uEzlbLajIVqGNVropPa7Z5H7r9zwtnhu8xBsxZcxWlF_1XSXSLneQ_Jc_ubweYaiLbF7iJsfBwzGFRWqyc-HM7jhFe6nNSxkfmzTQuJegn1bsQxX1u0Te3TSOkAKqXa3GUR-KUae0pLwCKnKY-v_7CSEWmCBlZgaBWNXiZBU-RrhWpcYOc8g2qK0T10kff9K_dg7kQGQS4b7R_H50gQgLogCLtiJ3VVcThkHEH4GoDHzi1abmp1VnfC2Qzlf_U_NxmYlg",
+							"type": "string"
+						}
+					]
+				},
+				"method": "PATCH",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"role\": \"admin\"\r\n}"
+				},
+				"url": {
+					"raw": "http://localhost:3000/api/users/cmiwbo42z0000u4lrl7284dxy",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"users",
+						"cmiwbo42z0000u4lrl7284dxy"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Création d'un compte pour un autre user (admin)",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJSUzI1NiIsImNhdCI6ImNsX0I3ZDRQRDExMUFBQSIsImtpZCI6Imluc18zNjJoN2thN0NXMk50eHpmNFlhNFlSRGo4aW4iLCJ0eXAiOiJKV1QifQ.eyJhenAiOiJodHRwOi8vbG9jYWxob3N0OjMwMDAiLCJleHAiOjE3NjUxODc0NzQsImZ2YSI6WzE0LC0xXSwiaWF0IjoxNzY1MTg3NDE0LCJpc3MiOiJodHRwczovL2NsYXNzaWMtZm94LTI5LmNsZXJrLmFjY291bnRzLmRldiIsIm5iZiI6MTc2NTE4NzQwNCwic2lkIjoic2Vzc18zNlliZUFKOEt3eFBWZ2dHVGlwdTBHZngyVDUiLCJzdHMiOiJhY3RpdmUiLCJzdWIiOiJ1c2VyXzM2SkZCaVUwTGxlcUg4MTV4SklDWW9DQnU3cyIsInYiOjJ9.OTmsuHPWEJT-dTQqXpIfV5lZERVaxrjy3a2qi_HltvJ--WQMLUQxnR3AVCigP88QGDOAmIJNdsFB77OiRcWjgtcwwGapdlPtGKEMa1lCj4LAqWgeroVQsV0MYB23_W4_adZOhEv4K0CZN4C2htxhJ9yF_9kUoqylPwNS2lpmD4JjCcs7zq8mV8WYFHHR3K4EYbyVINjXoRh7XDDuIxHZf4OsMKTZKlRE0y4enbA6bFJmURUe6cqGuqqWcuAs9P5bYp9TEgSQXfkI69YsCuUw-TKcoNPjht5h7dXN8MkMvHMax24zkIa69AmoOjUlBI85iOAUGrl46Agy8s0aXnKm5w",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n\"clerkId\": \"user_36JYuVG48uvcTjulvpT33H4WA3j\",\r\n  \"name\": \"Lucy\",\r\n  \"email\": \"lucy@example.com\",\r\n  \"phone\": \"5141234567\",\r\n  \"password\": \"Lafleurerouge1\",\r\n  \"confirmationPassword\": \"Lafleurerouge1\"\r\n}"
+				},
+				"url": {
+					"raw": "http://localhost:3000/api/users/",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"users",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Accéder à tous les users (admin)",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJSUzI1NiIsImNhdCI6ImNsX0I3ZDRQRDExMUFBQSIsImtpZCI6Imluc18zNjJoN2thN0NXMk50eHpmNFlhNFlSRGo4aW4iLCJ0eXAiOiJKV1QifQ.eyJhenAiOiJodHRwOi8vbG9jYWxob3N0OjMwMDAiLCJleHAiOjE3NjUxODc3MTAsImZ2YSI6WzE4LC0xXSwiaWF0IjoxNzY1MTg3NjUwLCJpc3MiOiJodHRwczovL2NsYXNzaWMtZm94LTI5LmNsZXJrLmFjY291bnRzLmRldiIsIm5iZiI6MTc2NTE4NzY0MCwic2lkIjoic2Vzc18zNlliZUFKOEt3eFBWZ2dHVGlwdTBHZngyVDUiLCJzdHMiOiJhY3RpdmUiLCJzdWIiOiJ1c2VyXzM2SkZCaVUwTGxlcUg4MTV4SklDWW9DQnU3cyIsInYiOjJ9.IaJZ7MGQbOaXP4lBJMFPjGPp8bweQoMC68p0zKl5so1-4ua39V_S7x0lPDRQYiFuNg-Fsnna3J57_A05RaqYuQVMe4189ANz5UXrFzNcLb-3Pdbl1lLt8jb9dvmgnzqPr8O_Zj0ZTa0r5hZruF4vp2ILZ-1rN3Asq_XEeozzbcj_cp_rC65ETunRW9qjDjOpXiJtfx_MzMA4ZxSv_01MkcLY0goo2zwXxdrPMH5ZIOLTkXSSp2zmuX-9CKWIxUzYpoDat6gIPasbQV3TaWhnfF_Uiz3F-8YAT2pDa-C-MGbGJgrv6yJp4L9jfhMxWtJz7Ycm1lwuneRhWmGFN_qbAA",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n\"clerkId\": \"user_36JYuVG48uvcTjulvpT33H4WA3j\",\r\n  \"name\": \"Lucy\",\r\n  \"email\": \"lucy@example.com\",\r\n  \"phone\": \"5141234567\",\r\n  \"password\": \"Lafleurerouge1\",\r\n  \"confirmationPassword\": \"Lafleurerouge1\"\r\n}"
+				},
+				"url": {
+					"raw": "http://localhost:3000/api/users/dashboard",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"users",
+						"dashboard"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Accéder à tous les users (erreur)",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJSUzI1NiIsImNhdCI6ImNsX0I3ZDRQRDExMUFBQSIsImtpZCI6Imluc18zNjJoN2thN0NXMk50eHpmNFlhNFlSRGo4aW4iLCJ0eXAiOiJKV1QifQ.eyJhenAiOiJodHRwOi8vbG9jYWxob3N0OjMwMDAiLCJleHAiOjE3NjUxODc3NDQsImZ2YSI6WzE4LC0xXSwiaWF0IjoxNzY1MTg3Njg0LCJpc3MiOiJodHRwczovL2NsYXNzaWMtZm94LTI5LmNsZXJrLmFjY291bnRzLmRldiIsIm5iZiI6MTc2NTE4NzY3NCwic2lkIjoic2Vzc18zNlliZUFKOEt3eFBWZ2dHVGlwdTBHZngyVDUiLCJzdHMiOiJhY3RpdmUiLCJzdWIiOiJ1c2VyXzM2SkZCaVUwTGxlcUg4MTV4SklDWW9DQnU3cyIsInYiOjJ9.x2IG9OD1kJA1BgAPNUAsoUlOaJ4Tkz_VfrfW640P48jiSbjemaPuFGeyePnWFFlOphWjqxsWx9axTSsg2TrScld5vL9k4iudnC3CJIB3prhJ3TxE69Y69SREk2XZN75UxW4mos-M4UT52v3Mqj6hXp14De6bc9varudsPQyZYqHCvWB_L9q8THPzNtUsxL3A1QbpyU9x3M2ISDhbvwKgkDm_gKu4-dAQEf2lGk4MtylklvYMcuLfWPvt_5ZA_xWLIYACe_xdlqaC2j97i2DxN-yYnoSNrAW_Ex9P8NavHBFQNdtbcl5xPakSNF6NiLLeKvh8YkGl-O6DY5z7wJOpVA",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n\"clerkId\": \"user_36JYuVG48uvcTjulvpT33H4WA3j\",\r\n  \"name\": \"Lucy\",\r\n  \"email\": \"lucy@example.com\",\r\n  \"phone\": \"5141234567\",\r\n  \"password\": \"Lafleurerouge1\",\r\n  \"confirmationPassword\": \"Lafleurerouge1\"\r\n}"
+				},
+				"url": {
+					"raw": "http://localhost:3000/api/users/dashboard",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"users",
+						"dashboard"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Création d'une réservation",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJSUzI1NiIsImNhdCI6ImNsX0I3ZDRQRDExMUFBQSIsImtpZCI6Imluc18zNjJoN2thN0NXMk50eHpmNFlhNFlSRGo4aW4iLCJ0eXAiOiJKV1QifQ.eyJhenAiOiJodHRwOi8vbG9jYWxob3N0OjMwMDAiLCJleHAiOjE3NjUxODgxOTAsImZ2YSI6WzI2LC0xXSwiaWF0IjoxNzY1MTg4MTMwLCJpc3MiOiJodHRwczovL2NsYXNzaWMtZm94LTI5LmNsZXJrLmFjY291bnRzLmRldiIsIm5iZiI6MTc2NTE4ODEyMCwic2lkIjoic2Vzc18zNlliZUFKOEt3eFBWZ2dHVGlwdTBHZngyVDUiLCJzdHMiOiJhY3RpdmUiLCJzdWIiOiJ1c2VyXzM2SkZCaVUwTGxlcUg4MTV4SklDWW9DQnU3cyIsInYiOjJ9.ghV-Nk5kn4jDe0Jkb37RQEeBmGdAs6Xy0JsM2aEDUul7ts3nHovOUi8jbk0cKyAor39noKUMl5bJPBei9Bdph5XltmS2kTZdZgjCJ4_e2lwr4_821b70dPmBS-WlGbhQeGbjppcp4SpBjzcSswsNQO0rO-Xra0Dv8SxwIeauoxGm74gi0Atp0RHT1gmGIsX7uotarq4wuGaEgERtkgpte3vQDrhWD8fTYNFxszACYUzEi0CZPxdjHfwIcdQizqXUEBhYrFTia5WwFqVD4DB29Ezlats6FzE4RpVUPuAWQiAhVRrkcF65739c2vQUb-25v69SNy89GvBD_m602KLh7Q",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"parkingSpotId\": \"1030488\",\r\n  \"endDateTime\": \"2025-12-08T10:10:00.000Z\"\r\n}"
+				},
+				"url": {
+					"raw": "http://localhost:3000/api/reservations",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"reservations"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Toutes les réservations d'un user",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJSUzI1NiIsImNhdCI6ImNsX0I3ZDRQRDExMUFBQSIsImtpZCI6Imluc18zNjJoN2thN0NXMk50eHpmNFlhNFlSRGo4aW4iLCJ0eXAiOiJKV1QifQ.eyJhenAiOiJodHRwOi8vbG9jYWxob3N0OjMwMDAiLCJleHAiOjE3NjUxODgzMzQsImZ2YSI6WzI4LC0xXSwiaWF0IjoxNzY1MTg4Mjc0LCJpc3MiOiJodHRwczovL2NsYXNzaWMtZm94LTI5LmNsZXJrLmFjY291bnRzLmRldiIsIm5iZiI6MTc2NTE4ODI2NCwic2lkIjoic2Vzc18zNlliZUFKOEt3eFBWZ2dHVGlwdTBHZngyVDUiLCJzdHMiOiJhY3RpdmUiLCJzdWIiOiJ1c2VyXzM2SkZCaVUwTGxlcUg4MTV4SklDWW9DQnU3cyIsInYiOjJ9.D0Eii1FkH01Wz9LQZD1RFuUCGiVq96WsW7IL-rYVvUrBumErNoVxJoToZD6wXOoG123mtrht60c5yw0DZWL2WYc_Dd4kzqd1md2I_nOOJbRLIt_PwJK-zxARtoRZOrgqfTl1z9iJnn2ZlOpyo-clUo92vMceefmuGajhEKUmsdOJdnXBpJEv7VVIOPF7hHSB0jaE5VsEnnFKdNF-OYcfOIDGuG1ERG3dlb4HzTJAi9Cn9OpGYtOt7XTAZsmCdEKavuxSGOafUqC6TyKJzuwS1g9jJR9BeDtU9PYXuLlbHwClT0RLw213JpKLUt2Q0REl7WeoIj5xrNe3uLjdwmGX7Q",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"parkingSpotId\": \"1030488\",\r\n  \"endDateTime\": \"2025-12-08T10:10:00.000Z\"\r\n}"
+				},
+				"url": {
+					"raw": "http://localhost:3000/api/reservations/",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"reservations",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Accéder au profil de notre réservation",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJSUzI1NiIsImNhdCI6ImNsX0I3ZDRQRDExMUFBQSIsImtpZCI6Imluc18zNjJoN2thN0NXMk50eHpmNFlhNFlSRGo4aW4iLCJ0eXAiOiJKV1QifQ.eyJhenAiOiJodHRwOi8vbG9jYWxob3N0OjMwMDAiLCJleHAiOjE3NjUxODg0NTIsImZ2YSI6WzMwLC0xXSwiaWF0IjoxNzY1MTg4MzkyLCJpc3MiOiJodHRwczovL2NsYXNzaWMtZm94LTI5LmNsZXJrLmFjY291bnRzLmRldiIsIm5iZiI6MTc2NTE4ODM4Miwic2lkIjoic2Vzc18zNlliZUFKOEt3eFBWZ2dHVGlwdTBHZngyVDUiLCJzdHMiOiJhY3RpdmUiLCJzdWIiOiJ1c2VyXzM2SkZCaVUwTGxlcUg4MTV4SklDWW9DQnU3cyIsInYiOjJ9.UmyGOWakWWYPFyR1SX4j-EW6DfDrBn40vNIoZcrPKK9ltimJUA3X-KJo5NWwBjNA52imW222JJJKjA8LAu9buKRRUceEAS15kzYsElnQ9j3kDkDWTjW5-nPkTJ-jrKdBMpkTGgThvWVYsujYiYQegFqWFHWrl6OeNi3JnEV6w45vo027PDTIlP_ZibLuDxptCFxHhgQ-gbenTUlUncLYQhIE-JwrgeBoQyfWSju2cSl7yzNc9mG1pkbW4QS07vbQi_SmRGlAi7JiDm75l2fdAuzOsESaE_rl-R4IC4qkkO5zGazB1le-0wF6_-PlJ6_D25VmHfns3wqTkZxLdVKN0w",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"parkingSpotId\": \"1030488\",\r\n  \"endDateTime\": \"2025-12-08T10:10:00.000Z\"\r\n}"
+				},
+				"url": {
+					"raw": "http://localhost:3000/api/reservations/cmiwzfyir0005cklr5kmia1jl",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"reservations",
+						"cmiwzfyir0005cklr5kmia1jl"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Accéder au profil d'une réservation d'un autre user",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJSUzI1NiIsImNhdCI6ImNsX0I3ZDRQRDExMUFBQSIsImtpZCI6Imluc18zNjJoN2thN0NXMk50eHpmNFlhNFlSRGo4aW4iLCJ0eXAiOiJKV1QifQ.eyJhenAiOiJodHRwOi8vbG9jYWxob3N0OjMwMDAiLCJleHAiOjE3NjUxODkzNTMsImZ2YSI6WzAsLTFdLCJpYXQiOjE3NjUxODkyOTMsImlzcyI6Imh0dHBzOi8vY2xhc3NpYy1mb3gtMjkuY2xlcmsuYWNjb3VudHMuZGV2IiwibmJmIjoxNzY1MTg5MjgzLCJzaWQiOiJzZXNzXzM2WWg3RkNwcVZwME1OVjhjaUtPT3RGaDZCYyIsInN0cyI6ImFjdGl2ZSIsInN1YiI6InVzZXJfMzZKRkJpVTBMbGVxSDgxNXhKSUNZb0NCdTdzIiwidiI6Mn0.uN1gBxgLm5KEB6vfDNxXwKJbuQ2wnhQ3C3rKyk2pacIOQUqPmOdqPTDxSmDt-_omPa_B3ww3UGUAveFCI0JA_z__juykip77Y_KXO6IZXK6SIq12O7XrUhWjZgCDJ4-VQtOT2wgNScPPnK5zgZh9EyLOVloB4BMpUlY_yLBGdX36Mx13qCn2ijsxOs1q-AuKcfbbOAps7W-EwLNqEfnRfSfSyfzBoHaWO7qmS7Edht4NB0t5qhAPPxXiuK3RnZENCyTh3PSFTF8W80JTCsLc_-1X-kqkI1xGztSx0-r_ppbgGLjC5HDnaVspgUmEEeLbtB67c7QEBFHPUnahX8TxGg",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "http://localhost:3000/api/reservations/cmix03f830007cklrnhigh79s",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"reservations",
+						"cmix03f830007cklrnhigh79s"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Création d'une autre réservation (erreur)",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJSUzI1NiIsImNhdCI6ImNsX0I3ZDRQRDExMUFBQSIsImtpZCI6Imluc18zNjJoN2thN0NXMk50eHpmNFlhNFlSRGo4aW4iLCJ0eXAiOiJKV1QifQ.eyJhenAiOiJodHRwOi8vbG9jYWxob3N0OjMwMDAiLCJleHAiOjE3NjUxODk1NzYsImZ2YSI6WzQsLTFdLCJpYXQiOjE3NjUxODk1MTYsImlzcyI6Imh0dHBzOi8vY2xhc3NpYy1mb3gtMjkuY2xlcmsuYWNjb3VudHMuZGV2IiwibmJmIjoxNzY1MTg5NTA2LCJzaWQiOiJzZXNzXzM2WWg3RkNwcVZwME1OVjhjaUtPT3RGaDZCYyIsInN0cyI6ImFjdGl2ZSIsInN1YiI6InVzZXJfMzZKRkJpVTBMbGVxSDgxNXhKSUNZb0NCdTdzIiwidiI6Mn0.b6WkZCy3he4kv2wcA92pqBoLNsXD5jlxcHqOPcnofg_ZYOrWZFIrNBNKe3e52G055oFboABUZbTYoj8h6IUav0dRNZpyw2oTqR-EvcorAriW_hPU1DVwNDm9ZHcN3iZVgzFG3F4maFNY_Jht3hFUt0lNFerzUlTwDoIj-t7kKin3KhKnK30KfJk_NKUUnEZ6J3L1ih8fJtb8yZvhrE7KSTIPbPNlc18urogk_BoRG0DMPxwzSAeDorRsVkteFoffq2hkso2vC8jHr6ZcslwcIgkA4SLTsKHg4GwnH0HNSOvKlrF1s5hCQ65EHWk9lKBz2PwePYlyu1i5Nv-aQglFOA",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"parkingSpotId\": \"1079872\",\r\n    \"endDateTime\": \"2025-12-08T10:29:00.000Z\"\r\n}"
+				},
+				"url": {
+					"raw": "http://localhost:3000/api/reservations/",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"reservations",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Création d'une réservation avec un parkingSpotId invalide",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJSUzI1NiIsImNhdCI6ImNsX0I3ZDRQRDExMUFBQSIsImtpZCI6Imluc18zNjJoN2thN0NXMk50eHpmNFlhNFlSRGo4aW4iLCJ0eXAiOiJKV1QifQ.eyJhenAiOiJodHRwOi8vbG9jYWxob3N0OjMwMDAiLCJleHAiOjE3NjUxODk5MDEsImZ2YSI6WzMsLTFdLCJpYXQiOjE3NjUxODk4NDEsImlzcyI6Imh0dHBzOi8vY2xhc3NpYy1mb3gtMjkuY2xlcmsuYWNjb3VudHMuZGV2IiwibmJmIjoxNzY1MTg5ODMxLCJzaWQiOiJzZXNzXzM2WWh1MnZNWTg3a1BzTnZqMzBFUnV4YTdxNCIsInN0cyI6ImFjdGl2ZSIsInN1YiI6InVzZXJfMzZKRkJpVTBMbGVxSDgxNXhKSUNZb0NCdTdzIiwidiI6Mn0.pyR0OXYzHschj1AaNg3Y9a7duiR2ExgbYvIriNrhiLJCLE-xdUvalT9z6vq4eZpk-18lk6M0vSBqWOJCA4MFrs_OpL4hm39D82TzpQD5HcjZJoTXD3Jhp2iet_L_s4z6KpP6uYYDeuUJPG51TNpnC31osA0j18keoVfzHhYI4mXdzsjXdrG4k1G34A4QqkwEzXJw75JFGQ8KxexXKvByDyvIK_WhiriKMqz1jq6RjcXLL7XzqCbYs25i0ENIhcQJoAOFFDhAYfJ2AtxrlId3x8xwn_Mp-z8h8VI1C1YC8KdLYyv2Ha9IsHY3m0TN5FBMCqbDYvBEMNZ8cQDK_gANdQ",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"parkingSpotId\": \"4884484\",\r\n    \"endDateTime\": \"2025-12-08T10:35:00.000Z\"\r\n}"
+				},
+				"url": {
+					"raw": "http://localhost:3000/api/reservations/",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"reservations",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Accéder à toutes les réservations (erreur réservé aux admins)",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJSUzI1NiIsImNhdCI6ImNsX0I3ZDRQRDExMUFBQSIsImtpZCI6Imluc18zNjJoN2thN0NXMk50eHpmNFlhNFlSRGo4aW4iLCJ0eXAiOiJKV1QifQ.eyJhenAiOiJodHRwOi8vbG9jYWxob3N0OjMwMDAiLCJleHAiOjE3NjUxOTAxNzMsImZ2YSI6WzgsLTFdLCJpYXQiOjE3NjUxOTAxMTMsImlzcyI6Imh0dHBzOi8vY2xhc3NpYy1mb3gtMjkuY2xlcmsuYWNjb3VudHMuZGV2IiwibmJmIjoxNzY1MTkwMTAzLCJzaWQiOiJzZXNzXzM2WWh1MnZNWTg3a1BzTnZqMzBFUnV4YTdxNCIsInN0cyI6ImFjdGl2ZSIsInN1YiI6InVzZXJfMzZKRkJpVTBMbGVxSDgxNXhKSUNZb0NCdTdzIiwidiI6Mn0.a7pJUr_oGlDJGQco0RubbhvcwvStU30B526pvZ-NWLYFRubWP6pK7ljnc19fgVbVByOuCp_8HWq45dN6qNiEK3wSuYAzPHkBrwIvnabxqVZ3L03Z9qV9aa77EUM-U9MzzhvX-qURNtAz4oZJ9n5xIgfoTWHZ01MUijD9iGgtcnyf9nEl592kYOXJxRLm867yulEpixPdMp_qMr_pe6n9vB95CjLoqyXqCgty_ybhJzBhFtzA18fa2qmUTsGZslUdINWqzflY-Hx9hEZXnLbmH_zWvZMDadjiOqSDoSauoW-la7koASmhnEWCkiA_RvDSV7vRELSIveqrFpnKEZ95Ow",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"parkingSpotId\": \"4884484\",\r\n    \"endDateTime\": \"2025-12-08T10:35:00.000Z\"\r\n}"
+				},
+				"url": {
+					"raw": "http://localhost:3000/api/reservations/dashboard",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"reservations",
+						"dashboard"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Accéder au profil d'une réservation",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJSUzI1NiIsImNhdCI6ImNsX0I3ZDRQRDExMUFBQSIsImtpZCI6Imluc18zNjJoN2thN0NXMk50eHpmNFlhNFlSRGo4aW4iLCJ0eXAiOiJKV1QifQ.eyJhenAiOiJodHRwOi8vbG9jYWxob3N0OjMwMDAiLCJleHAiOjE3NjUxOTAyMTIsImZ2YSI6WzgsLTFdLCJpYXQiOjE3NjUxOTAxNTIsImlzcyI6Imh0dHBzOi8vY2xhc3NpYy1mb3gtMjkuY2xlcmsuYWNjb3VudHMuZGV2IiwibmJmIjoxNzY1MTkwMTQyLCJzaWQiOiJzZXNzXzM2WWh1MnZNWTg3a1BzTnZqMzBFUnV4YTdxNCIsInN0cyI6ImFjdGl2ZSIsInN1YiI6InVzZXJfMzZKRkJpVTBMbGVxSDgxNXhKSUNZb0NCdTdzIiwidiI6Mn0.gY89Td5vjXwomhOYpy2dQur1L4YOfSEVBmtvrQZtXUNGRvXYixeaV2KCCnIh10iU6niKtMFa9tH5hrUUSMbtkH6aI9QgZ8drVF-ypYpfZipWxJLNEPldW_FfC6Dx8aa2dwXdakOGUMjAVPMWt9UfS0Mp5txD8MhI6DJTJmk_pp4k7zzmaGRV4poKHnWEWaoQyWw2_H4sQ-AJRc80tJqDvcusAQ8JHsvjZj1vjNAe399r0I2uzzAw3V1xEiSiGcbyzpq95pMgznyc_Q4njq8NDbkckfpVgC9qjuj8ZgF-02XjWgTWThkfI3WkypXye_7GOKztooQGtzqjly8ZtnlC0g",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"parkingSpotId\": \"4884484\",\r\n    \"endDateTime\": \"2025-12-08T10:35:00.000Z\"\r\n}"
+				},
+				"url": {
+					"raw": "http://localhost:3000/api/reservations/cmix03f830007cklrnhigh79s",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"reservations",
+						"cmix03f830007cklrnhigh79s"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Création d'une réservation avec moins de 5 minutes (erreur)",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJSUzI1NiIsImNhdCI6ImNsX0I3ZDRQRDExMUFBQSIsImtpZCI6Imluc18zNjJoN2thN0NXMk50eHpmNFlhNFlSRGo4aW4iLCJ0eXAiOiJKV1QifQ.eyJhenAiOiJodHRwOi8vbG9jYWxob3N0OjMwMDAiLCJleHAiOjE3NjUxOTA0ODksImZ2YSI6WzEzLC0xXSwiaWF0IjoxNzY1MTkwNDI5LCJpc3MiOiJodHRwczovL2NsYXNzaWMtZm94LTI5LmNsZXJrLmFjY291bnRzLmRldiIsIm5iZiI6MTc2NTE5MDQxOSwic2lkIjoic2Vzc18zNllodTJ2TVk4N2tQc052ajMwRVJ1eGE3cTQiLCJzdHMiOiJhY3RpdmUiLCJzdWIiOiJ1c2VyXzM2SkZCaVUwTGxlcUg4MTV4SklDWW9DQnU3cyIsInYiOjJ9.omrt3x-gdAlewfLaVFZx6xfukNS6E3ruLxhWcew6TR3o7Q0e3iMK3MYs39DTLRSxwfe3sud-JtGOT6vnAl4joZM7xCm6Pdd0zHfpL1mk51Ste78_RqwzjTX7-dxzTma4qihQL8NsmO_SJK0aiL3_uuCQMiM7gZeJc4kSXgoILRlxf_TQ-9nqAuD5fae-paTQUW1MUh3nGrilaksDpxZZPWcgEmaA7YZiGuHKNoKTfvfC3dFJd_qWI9Eo2qLB7h1dcX6hSxZXgrOxdSWHC36d2K6yji_5wl4zJstcCNDQNYPk9YUw7AYsQUvHVxPqW3_ckxCm22VWtN4a9zNjMYQ-Gg",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"clerkId\": \"user_36JYuVG48uvcTjulvpT33H4WA3j\",\r\n    \"parkingSpotId\": \"1125358\",\r\n    \"endDateTime\": \"2025-12-08T10:45:00.000Z\"\r\n}"
+				},
+				"url": {
+					"raw": "http://localhost:3000/api/reservations/",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"reservations",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Création d'une réservation avec plus de 15 minutes",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJSUzI1NiIsImNhdCI6ImNsX0I3ZDRQRDExMUFBQSIsImtpZCI6Imluc18zNjJoN2thN0NXMk50eHpmNFlhNFlSRGo4aW4iLCJ0eXAiOiJKV1QifQ.eyJhenAiOiJodHRwOi8vbG9jYWxob3N0OjMwMDAiLCJleHAiOjE3NjUxOTA1NjgsImZ2YSI6WzE0LC0xXSwiaWF0IjoxNzY1MTkwNTA4LCJpc3MiOiJodHRwczovL2NsYXNzaWMtZm94LTI5LmNsZXJrLmFjY291bnRzLmRldiIsIm5iZiI6MTc2NTE5MDQ5OCwic2lkIjoic2Vzc18zNllodTJ2TVk4N2tQc052ajMwRVJ1eGE3cTQiLCJzdHMiOiJhY3RpdmUiLCJzdWIiOiJ1c2VyXzM2SkZCaVUwTGxlcUg4MTV4SklDWW9DQnU3cyIsInYiOjJ9.P-OdZIPZP7tEzX2sGXw2CNnIPp-nRmcusJKFt4xYttm2r8PFWi3PkmhfvSVN-uqt2UU7Q92UNrH7J9UDRULPmF4Jg-Z2ySZJmiHUQ_ef235om32PZRZpXXf2V_HkKqcG_vt64v5ObzQyZS-3zzZGHaR9PLMFC-oa3PNB94KCi-X6Fn9GKuihxNMDAx9-McpQwFwXFy1SjeQCQGj6jVypOYR8y49m1WrP8x0ehitnAkL2NUJdRvGivKpIfiFcZVfW2T8ypjM23UeSqsNDzPDlcm6iMbg0rh8xdCwN9FssZcV6e_R3B5U7M4gT16x75pC3-chdQ5WKiaE50167t-7nEA",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"clerkId\": \"user_36JYuVG48uvcTjulvpT33H4WA3j\",\r\n    \"parkingSpotId\": \"1125358\",\r\n    \"endDateTime\": \"2025-12-08T10:58:00.000Z\"\r\n}"
+				},
+				"url": {
+					"raw": "http://localhost:3000/api/reservations/",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"reservations",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Création d'une réservation pour un autre user (admin)",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJSUzI1NiIsImNhdCI6ImNsX0I3ZDRQRDExMUFBQSIsImtpZCI6Imluc18zNjJoN2thN0NXMk50eHpmNFlhNFlSRGo4aW4iLCJ0eXAiOiJKV1QifQ.eyJhenAiOiJodHRwOi8vbG9jYWxob3N0OjMwMDAiLCJleHAiOjE3NjUxOTA2MjksImZ2YSI6WzE1LC0xXSwiaWF0IjoxNzY1MTkwNTY5LCJpc3MiOiJodHRwczovL2NsYXNzaWMtZm94LTI5LmNsZXJrLmFjY291bnRzLmRldiIsIm5iZiI6MTc2NTE5MDU1OSwic2lkIjoic2Vzc18zNllodTJ2TVk4N2tQc052ajMwRVJ1eGE3cTQiLCJzdHMiOiJhY3RpdmUiLCJzdWIiOiJ1c2VyXzM2SkZCaVUwTGxlcUg4MTV4SklDWW9DQnU3cyIsInYiOjJ9.KLggwSNmkoneC24UiPkavlieG1pzUBDM8vTTiEzl_a73g1ka3HQ4tJUk4IcYrzP2QwLSGw_iUro3PRV-zzD6OO1_flDqoH0R2yy7bzJlt_HYnJs15VDi48HiJvK5lP7Gob12qsRYrKrn1RGyq38rn814T-qEqdQp5UEszDTWyhksB8Di-rT0Cw41c7f_gUY9TnMzaTzgJZYOmMYfyQzGkNw6C21nE4lqwj1j_jb63qalDprU38PLkpGUA4ZSzftZee3V1a1FvGERWs9iKa91h4j-YV5SOIDRiiuyHu7nU5SN64okHEhoOWtHlBN0sBD-Pg2BU_2BL6MEcMxthZkQYg",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"clerkId\": \"user_36JYuVG48uvcTjulvpT33H4WA3j\",\r\n    \"parkingSpotId\": \"1125358\",\r\n    \"endDateTime\": \"2025-12-08T10:48:00.000Z\"\r\n}"
+				},
+				"url": {
+					"raw": "http://localhost:3000/api/reservations/",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"reservations",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Accéder à toutes les réservations (admin)",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJSUzI1NiIsImNhdCI6ImNsX0I3ZDRQRDExMUFBQSIsImtpZCI6Imluc18zNjJoN2thN0NXMk50eHpmNFlhNFlSRGo4aW4iLCJ0eXAiOiJKV1QifQ.eyJhenAiOiJodHRwOi8vbG9jYWxob3N0OjMwMDAiLCJleHAiOjE3NjUxOTA3MjMsImZ2YSI6WzE3LC0xXSwiaWF0IjoxNzY1MTkwNjYzLCJpc3MiOiJodHRwczovL2NsYXNzaWMtZm94LTI5LmNsZXJrLmFjY291bnRzLmRldiIsIm5iZiI6MTc2NTE5MDY1Mywic2lkIjoic2Vzc18zNllodTJ2TVk4N2tQc052ajMwRVJ1eGE3cTQiLCJzdHMiOiJhY3RpdmUiLCJzdWIiOiJ1c2VyXzM2SkZCaVUwTGxlcUg4MTV4SklDWW9DQnU3cyIsInYiOjJ9.QK-owW6BAYB0V00jxen00ZT-mrQBdgOYejBnJoS_PtHUklZGnqbcGApAFcQisMmNQmBjKhltSyEaKd4z04HWr5YubRdTuF5dbcyT2flhFNQTLrngrdLtK8yA8tbgvv8VVzYHcfOAeCZi6cvRmScXTYCGipYNH-w0iq1wAhXzvkPznaJCGYVQX_WNiwDXr07B4FSnlodqmxR7s71ljBKxCzhmGy8uu6UwxqJQcqR4qC76eMeIxwbRkrjPL_vHkzaP0CXVQqwbwm_oJyVt4eLImJUNr-vGrIKp4Qv0EsIbpat2wq6zIFI7x3y1U2XqwmzUKk4AyZVjAWlLk7avByoIhA",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"clerkId\": \"user_36JYuVG48uvcTjulvpT33H4WA3j\",\r\n    \"parkingSpotId\": \"1125358\",\r\n    \"endDateTime\": \"2025-12-08T10:48:00.000Z\"\r\n}"
+				},
+				"url": {
+					"raw": "http://localhost:3000/api/reservations/dashboard",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"reservations",
+						"dashboard"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Modifier le role d'un user (admin)",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJSUzI1NiIsImNhdCI6ImNsX0I3ZDRQRDExMUFBQSIsImtpZCI6Imluc18zNjJoN2thN0NXMk50eHpmNFlhNFlSRGo4aW4iLCJ0eXAiOiJKV1QifQ.eyJhenAiOiJodHRwOi8vbG9jYWxob3N0OjMwMDAiLCJleHAiOjE3NjUxOTA4MzMsImZ2YSI6WzE5LC0xXSwiaWF0IjoxNzY1MTkwNzczLCJpc3MiOiJodHRwczovL2NsYXNzaWMtZm94LTI5LmNsZXJrLmFjY291bnRzLmRldiIsIm5iZiI6MTc2NTE5MDc2Mywic2lkIjoic2Vzc18zNllodTJ2TVk4N2tQc052ajMwRVJ1eGE3cTQiLCJzdHMiOiJhY3RpdmUiLCJzdWIiOiJ1c2VyXzM2SkZCaVUwTGxlcUg4MTV4SklDWW9DQnU3cyIsInYiOjJ9.bHaiQBA67jOtddnopdl6RMKWd-MUppqxGApno-n6T2y5IoSmBtdc29tSK_qpp0OJ5AfTDn3rp0sZZmqnV0wobtXm1EpIG1QNSRjd38CuLHo5LjxxHyZRyrQuic_89o1FMs9NJFvhnyo3zpRaLiB0hx9wcgV2nNfCfP8FOybcz7diOpRwA68tT6cQk41KMXFNgJOflGYLBJnHvs5jMlTbWqwd3AdFVuvlR8NG2C98mcBGqWB2zK7_lx7THhDNcScqxonGL1Dw9dII_MsPInqnyXA4CYWe8dcP1_J1XG_F1wfLawOuKDbSTNU7ZP3gHmFNq1Z0EhhFhYLWJpqGLfx8ww",
+							"type": "string"
+						}
+					]
+				},
+				"method": "PATCH",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"role\": \"admin\"\r\n}"
+				},
+				"url": {
+					"raw": "http://localhost:3000/api/users/cmiwz0oc00004cklrskmvrf6m",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"users",
+						"cmiwz0oc00004cklrskmvrf6m"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Accéder à tous les parking spots",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJSUzI1NiIsImNhdCI6ImNsX0I3ZDRQRDExMUFBQSIsImtpZCI6Imluc18zNjJoN2thN0NXMk50eHpmNFlhNFlSRGo4aW4iLCJ0eXAiOiJKV1QifQ.eyJhenAiOiJodHRwOi8vbG9jYWxob3N0OjMwMDAiLCJleHAiOjE3NjUxOTA5MTQsImZ2YSI6WzIwLC0xXSwiaWF0IjoxNzY1MTkwODU0LCJpc3MiOiJodHRwczovL2NsYXNzaWMtZm94LTI5LmNsZXJrLmFjY291bnRzLmRldiIsIm5iZiI6MTc2NTE5MDg0NCwic2lkIjoic2Vzc18zNllodTJ2TVk4N2tQc052ajMwRVJ1eGE3cTQiLCJzdHMiOiJhY3RpdmUiLCJzdWIiOiJ1c2VyXzM2SkZCaVUwTGxlcUg4MTV4SklDWW9DQnU3cyIsInYiOjJ9.CH5l8HR1oBlJOiagLd2Z9PPznQiNQece-Obcv7b1iDEV3peFgP-MHeF-tsE9rlPaCfgqltW0G6mbtefG7AQDPbzSWqN1SAmxMG9LweFDdZzclapbJEsXpe5zcWAGnOwPhL0N16wtQnp9o3z3zrbAGqmq5kxdFPSgcukaY5g0alkEi4zFVXtB12-cXnicD2N5Y921rEXDclpkrvnoqiOMwzqPURdJl4O_F5W2IkxC-IU2FAm-9pJmG_VOplT5HIgkmj4fQGhR_zZUV9qpnb7qug0PqqXVIQpvK99cxv3Dxx4XpBWE0gfK6yEN3XaRY3BAV0ZPqrTQrRuTX-rR4Q0PXA",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"role\": \"admin\"\r\n}"
+				},
+				"url": {
+					"raw": "http://localhost:3000/api/parking-spots",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"parking-spots"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Accéder au profil d'un parking spot",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJSUzI1NiIsImNhdCI6ImNsX0I3ZDRQRDExMUFBQSIsImtpZCI6Imluc18zNjJoN2thN0NXMk50eHpmNFlhNFlSRGo4aW4iLCJ0eXAiOiJKV1QifQ.eyJhenAiOiJodHRwOi8vbG9jYWxob3N0OjMwMDAiLCJleHAiOjE3NjUxOTA5ODIsImZ2YSI6WzIxLC0xXSwiaWF0IjoxNzY1MTkwOTIyLCJpc3MiOiJodHRwczovL2NsYXNzaWMtZm94LTI5LmNsZXJrLmFjY291bnRzLmRldiIsIm5iZiI6MTc2NTE5MDkxMiwic2lkIjoic2Vzc18zNllodTJ2TVk4N2tQc052ajMwRVJ1eGE3cTQiLCJzdHMiOiJhY3RpdmUiLCJzdWIiOiJ1c2VyXzM2SkZCaVUwTGxlcUg4MTV4SklDWW9DQnU3cyIsInYiOjJ9.Asx0uIZMh0ri0vkPDmVegX0OJV0FNr73L9MKVoDH1n1vOgNE_hal0sDc60AscjceNQEbe3ibN05k_DgSjQ3P0kLQXfk6uiBDq5eRuk_7yryXxWdg8uo7HClg59o9025yqUnuK8iNjjCllzzR0atDGM6JYzlzdhXL-LQYUqYZa7NI6neZ7j00VZ_3RWq_OexCNG2a7stjyw3XJOm2SzTJs7dmPSwMsJ2ECQeyfE0mvT1NgNGedqUgBalHI7OdyJbq854OTPyjFhSBVTumEYpclJ5bZNuSbClVrmajmYE7lHD_9EorfefbSB0DDSMKGUe2mcUM7aMqwOKiTCJQJAXjBg",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"role\": \"admin\"\r\n}"
+				},
+				"url": {
+					"raw": "http://localhost:3000/api/parking-spots/1030488",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"parking-spots",
+						"1030488"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Création d'un paiement",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJSUzI1NiIsImNhdCI6ImNsX0I3ZDRQRDExMUFBQSIsImtpZCI6Imluc18zNjJoN2thN0NXMk50eHpmNFlhNFlSRGo4aW4iLCJ0eXAiOiJKV1QifQ.eyJhenAiOiJodHRwOi8vbG9jYWxob3N0OjMwMDAiLCJleHAiOjE3NjUxOTEyODIsImZ2YSI6WzI2LC0xXSwiaWF0IjoxNzY1MTkxMjIyLCJpc3MiOiJodHRwczovL2NsYXNzaWMtZm94LTI5LmNsZXJrLmFjY291bnRzLmRldiIsIm5iZiI6MTc2NTE5MTIxMiwic2lkIjoic2Vzc18zNllodTJ2TVk4N2tQc052ajMwRVJ1eGE3cTQiLCJzdHMiOiJhY3RpdmUiLCJzdWIiOiJ1c2VyXzM2SkZCaVUwTGxlcUg4MTV4SklDWW9DQnU3cyIsInYiOjJ9.tu97xSKQH1FbQlsijcVgORjMarKjq0HzHvBdnk6Ppy7vIAYmT21DBMPGxx1Luy0Qr0rfnOhXvWWnnFeEcpi1jvJRvTK-andNa1-EgzA76qa9zcoRG2WC94DVDdNGmfW_drbhk7w6dZh1MN32DEKfnQWZo10VHeJaF05CI5-h6lzPeCGAVYYvIwgUYwD1e5ja2IxwJwW1fwahUJnngmmcnVJIW_teAgA83T2hAtFRSEdNp1pGnUhW5SdBj45V2ZzqhMxg9_mbbfQZ3SsRuk0YoXiXfa_0GtjYzfhAKVjuLwoFDUc1eNEESQFjxuOf9Gu-LGPdY5VvvK3xsGbnzVDBug",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"parkingSpotId\": \"1030488\",\r\n  \"duration\": 10\r\n}"
+				},
+				"url": {
+					"raw": "http://localhost:3000/api/paiements",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"paiements"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Création d'un paiement lié à une réservation",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJSUzI1NiIsImNhdCI6ImNsX0I3ZDRQRDExMUFBQSIsImtpZCI6Imluc18zNjJoN2thN0NXMk50eHpmNFlhNFlSRGo4aW4iLCJ0eXAiOiJKV1QifQ.eyJhenAiOiJodHRwOi8vbG9jYWxob3N0OjMwMDAiLCJleHAiOjE3NjUxOTI3MzMsImZ2YSI6WzUwLC0xXSwiaWF0IjoxNzY1MTkyNjczLCJpc3MiOiJodHRwczovL2NsYXNzaWMtZm94LTI5LmNsZXJrLmFjY291bnRzLmRldiIsIm5iZiI6MTc2NTE5MjY2Mywic2lkIjoic2Vzc18zNllodTJ2TVk4N2tQc052ajMwRVJ1eGE3cTQiLCJzdHMiOiJhY3RpdmUiLCJzdWIiOiJ1c2VyXzM2SkZCaVUwTGxlcUg4MTV4SklDWW9DQnU3cyIsInYiOjJ9.Mu74O5dRblwc8sGqK7D2tRMlZmgfs3HJv21ejCBe8GXgMHHtgcSDKr_SR-zxOxoIpueytDniV8wYY1XISj3-HL4eStAppDrw6ziQMS5CifyCuYTI85h_IZ3h-f9KN-D8d3D6Ix--tq8IQBGse7wt3HuHlYDUsgFDVXxUiq4AC8_0xYCsoAOIt3V44Ap9_2dm_L8n_Gnvc57TqU7ENEu6bo0X-bgLNs5xV8pCAF0xfG-LBIZuAbdfdvX2Io9Uj5f6BAgST_gflGdaMje98SIWwSUuYEcwZi4vNlsFT6zH4GY_UbfcN1N4WveMmaWkvcnvqArxfU--neT5fjY4eQW3Dg",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"parkingSpotId\": \"1079872\",\r\n  \"reservationId\": \"cmix23me3000dcklr462b1iaw\",\r\n  \"duration\": 10\r\n}"
+				},
+				"url": {
+					"raw": "http://localhost:3000/api/paiements",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"paiements"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Accéder à tous nos paiements",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJSUzI1NiIsImNhdCI6ImNsX0I3ZDRQRDExMUFBQSIsImtpZCI6Imluc18zNjJoN2thN0NXMk50eHpmNFlhNFlSRGo4aW4iLCJ0eXAiOiJKV1QifQ.eyJhenAiOiJodHRwOi8vbG9jYWxob3N0OjMwMDAiLCJleHAiOjE3NjUxOTI4ODAsImZ2YSI6WzUzLC0xXSwiaWF0IjoxNzY1MTkyODIwLCJpc3MiOiJodHRwczovL2NsYXNzaWMtZm94LTI5LmNsZXJrLmFjY291bnRzLmRldiIsIm5iZiI6MTc2NTE5MjgxMCwic2lkIjoic2Vzc18zNllodTJ2TVk4N2tQc052ajMwRVJ1eGE3cTQiLCJzdHMiOiJhY3RpdmUiLCJzdWIiOiJ1c2VyXzM2SkZCaVUwTGxlcUg4MTV4SklDWW9DQnU3cyIsInYiOjJ9.bxKGN8OQWrH_oKGkU7PlnHf76LD4UNXvNB0qzHIh2hQ3fzWWESe-lRXcogh4I2eJhyvQ0sA4Lz3tYmI-MpshUhWFR6JNVmOkFdZb8VqNXkEU64-7ob8n03eNOffQQpJiWG3PsPPNudiv61DQqMggkvq4ovhG8SIpA5K4NgE_o8srggHQj9Yl6Vpa-k8pB7hJvoZESDxAVNysr5QG8PaYDOK4y__53U0ixorCeoYVyc3QBxmAahN74Y3AapgOnlXQR02FEXrkmOVkikr0cxk1Cw2HEKxtbJ5ApX4AWT_PVSIG1Ee_cR8pmbXduExUYAYoYt33Y8Yu4M_aqjv_Omp-Ng",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"parkingSpotId\": \"1079872\",\r\n  \"reservationId\": \"cmix23me3000dcklr462b1iaw\",\r\n  \"duration\": 10\r\n}"
+				},
+				"url": {
+					"raw": "http://localhost:3000/api/paiements",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"paiements"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Accéder au profile d'un de nos paiements",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJSUzI1NiIsImNhdCI6ImNsX0I3ZDRQRDExMUFBQSIsImtpZCI6Imluc18zNjJoN2thN0NXMk50eHpmNFlhNFlSRGo4aW4iLCJ0eXAiOiJKV1QifQ.eyJhenAiOiJodHRwOi8vbG9jYWxob3N0OjMwMDAiLCJleHAiOjE3NjUxOTI5NjMsImZ2YSI6WzU0LC0xXSwiaWF0IjoxNzY1MTkyOTAzLCJpc3MiOiJodHRwczovL2NsYXNzaWMtZm94LTI5LmNsZXJrLmFjY291bnRzLmRldiIsIm5iZiI6MTc2NTE5Mjg5Mywic2lkIjoic2Vzc18zNllodTJ2TVk4N2tQc052ajMwRVJ1eGE3cTQiLCJzdHMiOiJhY3RpdmUiLCJzdWIiOiJ1c2VyXzM2SkZCaVUwTGxlcUg4MTV4SklDWW9DQnU3cyIsInYiOjJ9.ldOl7jmbHmOnMSuSpm64Q0lJbVrG0ZUhHmt4UNvi984QUHvndeqyNd7_5fPu8ingG7wRTiiM29f54zoYoDERKTNUB7ab_L4uDzQpwusXZZj6XIubWwwvso8yTM9OEx-kj3lNTV4d6ziyLAoYFUdF4DAAROi0QD0LGSZFJTXObzUD-MrnFcGC4i8svO9X1sBEvVSAZkOWpYGlB-eXxg9nWJEFpaoyBhbBD_V8fFmwClQzGmjTBNoBUI-bihTYTXaXvVS9B2jZZHkrfORTwQ67AxB9ni6vNN1__CrwZW8rSzAKlKrkMR7hCCy7g5v61tJFdEkaXrqiIUDwEIDTd2L2HQ",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"parkingSpotId\": \"1079872\",\r\n  \"reservationId\": \"cmix23me3000dcklr462b1iaw\",\r\n  \"duration\": 10\r\n}"
+				},
+				"url": {
+					"raw": "http://localhost:3000/api/paiements/cmix1a8t00009cklrknav92oq",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"paiements",
+						"cmix1a8t00009cklrknav92oq"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Création d'un paiement avec un parkingSpotId inexistant",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJSUzI1NiIsImNhdCI6ImNsX0I3ZDRQRDExMUFBQSIsImtpZCI6Imluc18zNjJoN2thN0NXMk50eHpmNFlhNFlSRGo4aW4iLCJ0eXAiOiJKV1QifQ.eyJhenAiOiJodHRwOi8vbG9jYWxob3N0OjMwMDAiLCJleHAiOjE3NjUxOTMxNDUsImZ2YSI6WzU3LC0xXSwiaWF0IjoxNzY1MTkzMDg1LCJpc3MiOiJodHRwczovL2NsYXNzaWMtZm94LTI5LmNsZXJrLmFjY291bnRzLmRldiIsIm5iZiI6MTc2NTE5MzA3NSwic2lkIjoic2Vzc18zNllodTJ2TVk4N2tQc052ajMwRVJ1eGE3cTQiLCJzdHMiOiJhY3RpdmUiLCJzdWIiOiJ1c2VyXzM2SkZCaVUwTGxlcUg4MTV4SklDWW9DQnU3cyIsInYiOjJ9.aMeyEtO49u44szUchF3lQCya7UZlFrrQb6qkOyBNfAuNHz7_IF1IIs7C2Y0h21oPsRAl1HfFzx14NuH_pqOtUNlgyMgXAryZPGZGl4wGyCFJJ8oToDEBEwv9KAhvynipYSr7bBWMR6kC72dZiYjVF5B9iuDLj2obG1mOmq_w31086PkSUjUA1_bGQEZrJYFdzepKQaUBP4C9Cy_9Dg8Zyea_jxdnBB3hfHC_t1CVtX2H_R9sGcEziAhOos5qPSHvfdg2Gax4GEtikj8BfXcMh537Y-cJeZUuD5DM55o0fnOicwPA0lRPjs0mMT1lGmxkdIWIKPmKZlnjitZue4Esmg",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"parkingSpotId\": \"8748747848\",\r\n  \"duration\": 10\r\n}"
+				},
+				"url": {
+					"raw": "http://localhost:3000/api/paiements/",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"paiements",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Création d'un paiement avec une durée inférieure à 10 minutes",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJSUzI1NiIsImNhdCI6ImNsX0I3ZDRQRDExMUFBQSIsImtpZCI6Imluc18zNjJoN2thN0NXMk50eHpmNFlhNFlSRGo4aW4iLCJ0eXAiOiJKV1QifQ.eyJhenAiOiJodHRwOi8vbG9jYWxob3N0OjMwMDAiLCJleHAiOjE3NjUxOTMzNDgsImZ2YSI6WzYwLC0xXSwiaWF0IjoxNzY1MTkzMjg4LCJpc3MiOiJodHRwczovL2NsYXNzaWMtZm94LTI5LmNsZXJrLmFjY291bnRzLmRldiIsIm5iZiI6MTc2NTE5MzI3OCwic2lkIjoic2Vzc18zNllodTJ2TVk4N2tQc052ajMwRVJ1eGE3cTQiLCJzdHMiOiJhY3RpdmUiLCJzdWIiOiJ1c2VyXzM2SkZCaVUwTGxlcUg4MTV4SklDWW9DQnU3cyIsInYiOjJ9.EoHLRxdOJZ2f4YOkp0QC65B5Lup57cycQ3NHHzk4q1Aqw82vSRE3gCj-latCxicOHwxZlK-RHVAzH25gnxPkDrkOnp3y66yU-CEPBoSO-W7pddrVKbHNXs29JEpqXvL68z_dk5TKMxv55G589o5A2Ek0UEkqSc-b_Twgt8f8pUWThC0gQ6msi_yXSuuNxpqX4NTONmx3FXxYW41BV-sKZROSFPMZtScsLoPcF0-rOXVbwzjzx_i9ev22-0cghz7ux8YvjqVzP1zwRhejv_9vhBgiSIo0ZW_n9hCZmHppPknAHAc2MnqPFyN1HfHDBxL0KIzUFhktC8M32eSUZLhBkA",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"parkingSpotId\": \"1139798\",\r\n  \"duration\": 4\r\n}"
+				},
+				"url": {
+					"raw": "http://localhost:3000/api/paiements/",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"paiements",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Création d'un paiement avec une durée plus grande que le maximum (erreur)",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJSUzI1NiIsImNhdCI6ImNsX0I3ZDRQRDExMUFBQSIsImtpZCI6Imluc18zNjJoN2thN0NXMk50eHpmNFlhNFlSRGo4aW4iLCJ0eXAiOiJKV1QifQ.eyJhenAiOiJodHRwOi8vbG9jYWxob3N0OjMwMDAiLCJleHAiOjE3NjUxOTM0MjEsImZ2YSI6WzYyLC0xXSwiaWF0IjoxNzY1MTkzMzYxLCJpc3MiOiJodHRwczovL2NsYXNzaWMtZm94LTI5LmNsZXJrLmFjY291bnRzLmRldiIsIm5iZiI6MTc2NTE5MzM1MSwic2lkIjoic2Vzc18zNllodTJ2TVk4N2tQc052ajMwRVJ1eGE3cTQiLCJzdHMiOiJhY3RpdmUiLCJzdWIiOiJ1c2VyXzM2SkZCaVUwTGxlcUg4MTV4SklDWW9DQnU3cyIsInYiOjJ9.sCH2U5u5iLenZZGuaTkLQYU0QSTk09AXyNhJziQaKDq74tQ2xX0F632efL8TsNpuB5AMqQZzne9UJco2J-E3_RQ8BLDFBsDhc3w1q-Ba13fQY1BpkdJESLPpVVx8S28kM8vUa6tWyhbCy0PC6qyP60nV1a5RxO16UDtT8BFrYMD_JsREGww8_jxsT21Qs1OsavO8bB8HhCamp1ggBRY6KVY-OrU_xbT-5kelVYrNAnWgy41EmTGIX0yIXR_bcdp6XQK8LnFlgbRNmrRE2sYSC53l9RZYYwiQpmB63v5Knw6nhTwjTTeTfwVmzKh2Q2MiaAV4lenoY5nrQFMPpk9Usw",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"parkingSpotId\": \"1139787\",\r\n  \"duration\": 200\r\n}"
+				},
+				"url": {
+					"raw": "http://localhost:3000/api/paiements/",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"paiements",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Accéder à tous les paiements (erreur réservé aux admins)",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJSUzI1NiIsImNhdCI6ImNsX0I3ZDRQRDExMUFBQSIsImtpZCI6Imluc18zNjJoN2thN0NXMk50eHpmNFlhNFlSRGo4aW4iLCJ0eXAiOiJKV1QifQ.eyJhenAiOiJodHRwOi8vbG9jYWxob3N0OjMwMDAiLCJleHAiOjE3NjUxOTM1MDEsImZ2YSI6WzYzLC0xXSwiaWF0IjoxNzY1MTkzNDQxLCJpc3MiOiJodHRwczovL2NsYXNzaWMtZm94LTI5LmNsZXJrLmFjY291bnRzLmRldiIsIm5iZiI6MTc2NTE5MzQzMSwic2lkIjoic2Vzc18zNllodTJ2TVk4N2tQc052ajMwRVJ1eGE3cTQiLCJzdHMiOiJhY3RpdmUiLCJzdWIiOiJ1c2VyXzM2SkZCaVUwTGxlcUg4MTV4SklDWW9DQnU3cyIsInYiOjJ9.udWJe1wL8XGCphS0BlFYpN-y2utcgKWsXpJrGBKties0HsEDyoJg_ZyiNLfrHG0ByUrxe4Sq7XEbJFgqIhjmGf680OP4_WoS11FoPNUC7Q1iN-b10rVvMt7j58bItlzmtPN9kXkmQYCWPYrwn8-JjAT7MdcddIq8FdgDpiR5W-2rAe5zNhKKkUbeX5CKV0jVi_D_ilgZU2LhEyEglCPcabLmUgT5xeJjMIjzb067kSqoyoyWH_JSKvA85hAV7XFVMHFDFlemOZ8-r5s-9vzo3Nsr5WDjtaA9HErDqXlzmj_k9pYgRxKrvfOSvl41hpfI3QTQPj6Wa8DPfAETf9ukww",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"parkingSpotId\": \"1139787\",\r\n  \"duration\": 200\r\n}"
+				},
+				"url": {
+					"raw": "http://localhost:3000/api/paiements/dashboard",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"paiements",
+						"dashboard"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Accéder au profil d'un paiement d'un autre user",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJSUzI1NiIsImNhdCI6ImNsX0I3ZDRQRDExMUFBQSIsImtpZCI6Imluc18zNjJoN2thN0NXMk50eHpmNFlhNFlSRGo4aW4iLCJ0eXAiOiJKV1QifQ.eyJhenAiOiJodHRwOi8vbG9jYWxob3N0OjMwMDAiLCJleHAiOjE3NjUxOTM4NTYsImZ2YSI6WzAsLTFdLCJpYXQiOjE3NjUxOTM3OTYsImlzcyI6Imh0dHBzOi8vY2xhc3NpYy1mb3gtMjkuY2xlcmsuYWNjb3VudHMuZGV2IiwibmJmIjoxNzY1MTkzNzg2LCJzaWQiOiJzZXNzXzM2WXFLUTBibTNiVnVNeFlxOXlISVg5TFg3cSIsInN0cyI6ImFjdGl2ZSIsInN1YiI6InVzZXJfMzZKRkJpVTBMbGVxSDgxNXhKSUNZb0NCdTdzIiwidiI6Mn0.mJWKc-9HKwJnr30xc2ALiqtC0u-OPpYXJXWc8GJN4pBgFClYkUt3hjm1SzdQMtG6i-o7DSojC7vVJhlOpetXV6lifCq3gUDX90RnjCDarvO3WnPMKC1YtCEccPRq4pg5nO_4iirZFMe0J1HnDJh2mzw56v2et7VjaqCOmqUmenI6KcfscYLcQ67QrJLlk9814Me5stYDNdPWIyz8slzTFr2KgpW0Y3riEaEPMwY3HExgSv-PPO3U78ij_pKATWqwhEJ93MdUFTREqc2QiAgbVITAPwPmhm-dP-muyF3yvOa6tDlG_pyRx_1Waeq4WoyZieJAdvWJ0KAk42ZGqTOjbQ",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"parkingSpotId\": \"1139787\",\r\n  \"duration\": 200\r\n}"
+				},
+				"url": {
+					"raw": "http://localhost:3000/api/paiements/cmix2pdlq000fcklrb5r1hyzc",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"paiements",
+						"cmix2pdlq000fcklrb5r1hyzc"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Accéder à tous ses paiement avec un compte supprimé (erreur)",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJSUzI1NiIsImNhdCI6ImNsX0I3ZDRQRDExMUFBQSIsImtpZCI6Imluc18zNjJoN2thN0NXMk50eHpmNFlhNFlSRGo4aW4iLCJ0eXAiOiJKV1QifQ.eyJhenAiOiJodHRwOi8vbG9jYWxob3N0OjMwMDAiLCJleHAiOjE3NjUxOTQwNzIsImZ2YSI6WzMsLTFdLCJpYXQiOjE3NjUxOTQwMTIsImlzcyI6Imh0dHBzOi8vY2xhc3NpYy1mb3gtMjkuY2xlcmsuYWNjb3VudHMuZGV2IiwibmJmIjoxNzY1MTk0MDAyLCJzaWQiOiJzZXNzXzM2WXFLUTBibTNiVnVNeFlxOXlISVg5TFg3cSIsInN0cyI6ImFjdGl2ZSIsInN1YiI6InVzZXJfMzZKRkJpVTBMbGVxSDgxNXhKSUNZb0NCdTdzIiwidiI6Mn0.avXreezpDXwHxfIYo71kABBw-Ro8siW85GS4XeCMicy3futEp2SOziSzklGAKKesbsowZGrHPYZUrFSQR25UC0Rx46imFoz3rBCCVGabK19RBzVUq4n9hX9BqpZoFRLOeizYxgk-kCy9S2yajS8-qajEGdakep4a-puGljPH44bb8_zTrcBxtJS_Xjw5MpFseHukPXSF8B5xsOl47VoDH4nn1bkHk8FbUWbfV-ZMOlTASwxRGfdJx_ENt7B90In1B55jsT5s2Gq_WZS3aEoVBPWo2e6dXGVY3XMVyY6tRbA5Ci9gDf8UQlwj8bxF7c3sWFlOA2JLWPFG86UjdQRqmQ",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"parkingSpotId\": \"1139787\",\r\n  \"duration\": 200\r\n}"
+				},
+				"url": {
+					"raw": "http://localhost:3000/api/paiements",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"paiements"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Création d'un paiement pour un autre user (admin)",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJSUzI1NiIsImNhdCI6ImNsX0I3ZDRQRDExMUFBQSIsImtpZCI6Imluc18zNjJoN2thN0NXMk50eHpmNFlhNFlSRGo4aW4iLCJ0eXAiOiJKV1QifQ.eyJhenAiOiJodHRwOi8vbG9jYWxob3N0OjMwMDAiLCJleHAiOjE3NjUxOTQzNTcsImZ2YSI6WzgsLTFdLCJpYXQiOjE3NjUxOTQyOTcsImlzcyI6Imh0dHBzOi8vY2xhc3NpYy1mb3gtMjkuY2xlcmsuYWNjb3VudHMuZGV2IiwibmJmIjoxNzY1MTk0Mjg3LCJzaWQiOiJzZXNzXzM2WXFLUTBibTNiVnVNeFlxOXlISVg5TFg3cSIsInN0cyI6ImFjdGl2ZSIsInN1YiI6InVzZXJfMzZKRkJpVTBMbGVxSDgxNXhKSUNZb0NCdTdzIiwidiI6Mn0.Qc4oUkn65v2PcIxrEgVcx55qSEjeIcZdAgVdpRIsRk_Gs0kCuGF2iIJf88bnIoMa14qTZUCJJ4_vJ3p_a3fKrLJdUU9SRnmCfXScDwijrKaZVzzjif0iM0IQxWg57Y3vj_s6zT7oP6Z5YK6kUJ6jEN5j1bmBEOPPn6PHxhJVe9NKN6-R55EChpKke8N1PWJ8m3ZWTEhhIJ7C_vTQzoibwcmFoGzAS8sGg0_Z6WeVlgrZyKGrB-c4ntv5TO4sPvnZjulkqZbm4Y3NjSRKfPBk9WGCjb2vdGTSU6eXGDlORBlI5EVZOCLtuxzFSRIrPNfHU_CL0nzOxkeMSqDijn2LZg",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"parkingSpotId\": \"1139787\",\r\n  \"clerkId\": \"user_36JYuVG48uvcTjulvpT33H4WA3j\",\r\n  \"duration\": 10\r\n}"
+				},
+				"url": {
+					"raw": "http://localhost:3000/api/paiements",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"paiements"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Accéder à tous les paiements (admin)",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJSUzI1NiIsImNhdCI6ImNsX0I3ZDRQRDExMUFBQSIsImtpZCI6Imluc18zNjJoN2thN0NXMk50eHpmNFlhNFlSRGo4aW4iLCJ0eXAiOiJKV1QifQ.eyJhenAiOiJodHRwOi8vbG9jYWxob3N0OjMwMDAiLCJleHAiOjE3NjUxOTQ0MjcsImZ2YSI6WzksLTFdLCJpYXQiOjE3NjUxOTQzNjcsImlzcyI6Imh0dHBzOi8vY2xhc3NpYy1mb3gtMjkuY2xlcmsuYWNjb3VudHMuZGV2IiwibmJmIjoxNzY1MTk0MzU3LCJzaWQiOiJzZXNzXzM2WXFLUTBibTNiVnVNeFlxOXlISVg5TFg3cSIsInN0cyI6ImFjdGl2ZSIsInN1YiI6InVzZXJfMzZKRkJpVTBMbGVxSDgxNXhKSUNZb0NCdTdzIiwidiI6Mn0.jlGtZ8l28iniV9eP7wCa_51347O9JV1Jz-Wav0qEbKERvUGP2TkJXBpWTGGhY66guPmH5UhUe0sqPZBev-wrflo-qVhDXAuoMDIekGhguxEu5ckzdENHLMUzR8lY9KC2HxDLOMeKqyVJslsaw8Zgr7JUG9qI-H3K3sSOB0PvlYNp13xkIpWmPjnahrrcYIVr_PlIvvVmYw3m7aqrYJVDrz7SdlrnXEKaa7K0XEN3vXJgf6AeUVPc_ZiUXmLTPcYB6Wfc-_Meu8-Uqol-FQZYX4aUvGKdHAVB6nV1IXm17q4_adbwQKZdTg4NUyyEZO7DDCEH2FM9Sx9c9Ej3IXktpg",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"parkingSpotId\": \"1139787\",\r\n  \"clerkId\": \"user_36JYuVG48uvcTjulvpT33H4WA3j\",\r\n  \"duration\": 10\r\n}"
+				},
+				"url": {
+					"raw": "http://localhost:3000/api/paiements/dashboard",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"paiements",
+						"dashboard"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Accéder au profil d'un paiement d'un autre user (admin)",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJSUzI1NiIsImNhdCI6ImNsX0I3ZDRQRDExMUFBQSIsImtpZCI6Imluc18zNjJoN2thN0NXMk50eHpmNFlhNFlSRGo4aW4iLCJ0eXAiOiJKV1QifQ.eyJhenAiOiJodHRwOi8vbG9jYWxob3N0OjMwMDAiLCJleHAiOjE3NjUxOTQ1MjQsImZ2YSI6WzExLC0xXSwiaWF0IjoxNzY1MTk0NDY0LCJpc3MiOiJodHRwczovL2NsYXNzaWMtZm94LTI5LmNsZXJrLmFjY291bnRzLmRldiIsIm5iZiI6MTc2NTE5NDQ1NCwic2lkIjoic2Vzc18zNllxS1EwYm0zYlZ1TXhZcTl5SElYOUxYN3EiLCJzdHMiOiJhY3RpdmUiLCJzdWIiOiJ1c2VyXzM2SkZCaVUwTGxlcUg4MTV4SklDWW9DQnU3cyIsInYiOjJ9.a-kJD3BoPuj7YunkEvefdQDLCgNhLfZSopbjKVKRAI61tIgF3521sWteWOz4G8HCxPCTV0xd11RuBvrhgAwHouRVqbQT8NkQkDLzacQc9TG9qwMEvsSi-uNws1czXoUxubiglUWIAQzP8WkN2Z24Kof6196V10fS9KaaZZeKJ0QG-ojlvs31vZb890Q-IcH3EWKgLlOuwB0v2q7RxzEv3Trg3BT8fYUpwUxZb7Qkhi7ZRPrVoJOSzdxUg2R7WKKvESHeahidejUoqCHeGo6oVdlLKdkmzAOJtUT-p11dElzaUR9VmWZKCewihzSQmLPN9MeqQcu6KHJLzcKCRis4lw",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"parkingSpotId\": \"1139787\",\r\n  \"clerkId\": \"user_36JYuVG48uvcTjulvpT33H4WA3j\",\r\n  \"duration\": 10\r\n}"
+				},
+				"url": {
+					"raw": "http://localhost:3000/api/paiements/cmix2pdlq000fcklrb5r1hyzc",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"paiements",
+						"cmix2pdlq000fcklrb5r1hyzc"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Faire un paiement sur une place réservée par un autre user (erreur)",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJSUzI1NiIsImNhdCI6ImNsX0I3ZDRQRDExMUFBQSIsImtpZCI6Imluc18zNjJoN2thN0NXMk50eHpmNFlhNFlSRGo4aW4iLCJ0eXAiOiJKV1QifQ.eyJhenAiOiJodHRwOi8vbG9jYWxob3N0OjMwMDAiLCJleHAiOjE3NjUxOTQ5OTcsImZ2YSI6WzAsLTFdLCJpYXQiOjE3NjUxOTQ5MzcsImlzcyI6Imh0dHBzOi8vY2xhc3NpYy1mb3gtMjkuY2xlcmsuYWNjb3VudHMuZGV2IiwibmJmIjoxNzY1MTk0OTI3LCJzaWQiOiJzZXNzXzM2WXNlTGUwbnB0VlNhYmdOTG1kYVppeEJWMyIsInN0cyI6ImFjdGl2ZSIsInN1YiI6InVzZXJfMzZKRkJpVTBMbGVxSDgxNXhKSUNZb0NCdTdzIiwidiI6Mn0.qA2BfDbOQcLDs-7kA3DBloyCtteiGX8hWJPZBW1Md-hanh4MjlSaRinsma-tWbsj28QJTOykptjobzsWTkQZYyaLujMboKhYA3mi7tBLnG96FiCejCSIzJJg6IB0WbrdY7N0EdCWjbpCYGBJSr0paEmSTFPV-gB3z_0LY2nsfAS5usjij_UeldqGlCoactwdtNeArlVE2ZtXbKKQXAj2j3R5sJ_8AvjTd876J5WYiYUEPzESWG-qx_0Uj5B7nbnwc7p-KPKvvmgaQ6tasgGS9GXTtZTGEK9UJNtR5_abnkF-IFHR2HCTQs6LdpfpCd3alH6ME7scAJrctjvWE0DpkQ",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"parkingSpotId\": \"1030488\",\r\n  \"duration\": 15\r\n}"
+				},
+				"url": {
+					"raw": "http://localhost:3000/api/paiements",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"paiements"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Effectuer un paiement qui est en cours créé par un autre user (erreur)",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJSUzI1NiIsImNhdCI6ImNsX0I3ZDRQRDExMUFBQSIsImtpZCI6Imluc18zNjJoN2thN0NXMk50eHpmNFlhNFlSRGo4aW4iLCJ0eXAiOiJKV1QifQ.eyJhenAiOiJodHRwOi8vbG9jYWxob3N0OjMwMDAiLCJleHAiOjE3NjUxOTUxOTMsImZ2YSI6WzAsLTFdLCJpYXQiOjE3NjUxOTUxMzMsImlzcyI6Imh0dHBzOi8vY2xhc3NpYy1mb3gtMjkuY2xlcmsuYWNjb3VudHMuZGV2IiwibmJmIjoxNzY1MTk1MTIzLCJzaWQiOiJzZXNzXzM2WXQyeHF4OWRRTjZMTTkyaXBpTlVRZ00xZSIsInN0cyI6ImFjdGl2ZSIsInN1YiI6InVzZXJfMzZKRkJpVTBMbGVxSDgxNXhKSUNZb0NCdTdzIiwidiI6Mn0.LshY9MM8h0mXwCnnd8Kg6UAdpgYo4Ri5LITbLEWJNWa9obMcbJgGaDFqV5NYDUn49nkt-qmRXQT6vrHi11khbQy6RenrUev1GR-tL0PC7U2DSodgUYREQuwev4gGChWOQpTMGpiJAGEksTfrMm-ACZSK9OLRiD7fmAiJ5NDY7s9DMZZJDSWJJICrkeEARyx9oC1rQp6tnApYBbY2Fasco-ZmyOYXpaS1IM8BxKZyaYnwl8wdl42RHgQBLefonPI1RXoxDPySpjlRocTpXA2ruNSnltbnMX_977x9ZpHsXeWE_zX0QPbiSkD8HwLw1E-oXGiJZZnjTOY2JuZJsVD47g",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"parkingSpotId\": \"1030492\",\r\n  \"duration\": 15\r\n}"
+				},
+				"url": {
+					"raw": "http://localhost:3000/api/paiements",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"paiements"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Création d'une réservation pour un parkingSpotId en cours de paiement par un autre user (erreur)",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJSUzI1NiIsImNhdCI6ImNsX0I3ZDRQRDExMUFBQSIsImtpZCI6Imluc18zNjJoN2thN0NXMk50eHpmNFlhNFlSRGo4aW4iLCJ0eXAiOiJKV1QifQ.eyJhenAiOiJodHRwOi8vbG9jYWxob3N0OjMwMDAiLCJleHAiOjE3NjUxOTU4MzIsImZ2YSI6WzEwLC0xXSwiaWF0IjoxNzY1MTk1NzcyLCJpc3MiOiJodHRwczovL2NsYXNzaWMtZm94LTI5LmNsZXJrLmFjY291bnRzLmRldiIsIm5iZiI6MTc2NTE5NTc2Miwic2lkIjoic2Vzc18zNll0MnhxeDlkUU42TE05MmlwaU5VUWdNMWUiLCJzdHMiOiJhY3RpdmUiLCJzdWIiOiJ1c2VyXzM2SkZCaVUwTGxlcUg4MTV4SklDWW9DQnU3cyIsInYiOjJ9.HAPwZ6zFrlmoP4s36Gds9ZEKJPDifrv3hw_Sp8-f18aNH9zVkND98tEaBGL_Ato6cIHAYrgxUVmYvD4-dXmxFi7ZDZkvLdmc5zRuWEfHQa1_p1kXTdkOc26WZprNQumQTtqUHHVfkgBkzLA7opPlK7WAgsV-pJHvfOuMoiyrkT_KzyprItuDob9rgLflyz9qFw2UU570WJ7ZSXV6RLFzFNOuTzvLFmQ-dSArFro1nlouCgMfLZTcisaqMy_mu3x-mZc89AA2MikhzUF39xI20MGKSSLrBdN09nxriNo8XtBn5k1dyK72F3ZFtIoFHkFeY9ySHQmgzo-Gt_k1zA5rpQ",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"parkingSpotId\": \"1079880\",\r\n  \"endDateTime\": \"2025-12-08T12:15:00Z\"\r\n}"
+				},
+				"url": {
+					"raw": "http://localhost:3000/api/reservations",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"reservations"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Création d'une réservation pour un parkingSpotId déjà réservé par un autre user (erreur)",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJSUzI1NiIsImNhdCI6ImNsX0I3ZDRQRDExMUFBQSIsImtpZCI6Imluc18zNjJoN2thN0NXMk50eHpmNFlhNFlSRGo4aW4iLCJ0eXAiOiJKV1QifQ.eyJhenAiOiJodHRwOi8vbG9jYWxob3N0OjMwMDAiLCJleHAiOjE3NjUxOTYwOTksImZ2YSI6WzIsLTFdLCJpYXQiOjE3NjUxOTYwMzksImlzcyI6Imh0dHBzOi8vY2xhc3NpYy1mb3gtMjkuY2xlcmsuYWNjb3VudHMuZGV2IiwibmJmIjoxNzY1MTk2MDI5LCJzaWQiOiJzZXNzXzM2WXVlOTRSM1QxNkdqOGduR21Gb016Y2kweiIsInN0cyI6ImFjdGl2ZSIsInN1YiI6InVzZXJfMzZKRkJpVTBMbGVxSDgxNXhKSUNZb0NCdTdzIiwidiI6Mn0.HySw9aPzjXe5f6xn_TZ1g609yv82sBZguLv7GEz9aZ6-kO88nhUa44MrrbzqekZM9alIniBmKC7qRWeoey7e5xrNTCQoDH7TuCc_FhyL_wQmhCE0JpSw6vr5Pr-bHAXN05T_DpcubkcVp1kTfJkgzmDx_y7ZPpO0-9pAXFIfefbnEpk2AnMihO-MZy97CwZ-yaER4yzA6Gg3ET4A-Ii27TjTT2_RxXuAxDORRfEz7BDZifFVIcolPYNkLhVDu7eg3TCwzf2eBxCTnsNJPLp8n_U2IGfDZqp-r3rIn8XotbDohQPSQveL3YjlWFQFTX70MNtWJcckRuxHSKOS4a5D-Q",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"parkingSpotId\": \"1125358\",\r\n  \"endDateTime\": \"2025-12-08T12:20:00Z\"\r\n}"
+				},
+				"url": {
+					"raw": "http://localhost:3000/api/reservations",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"reservations"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

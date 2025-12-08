@@ -92,7 +92,7 @@ export default function PrePaiementPage() {
 
   if (!isSignedIn) {
     return (
-      <div className="text-center mt-10 text-red-500">
+      <div className="text-center text-2xl mt-10 text-black">
         Connecte-toi pour créer un paiement.
       </div>
     );
@@ -102,7 +102,7 @@ export default function PrePaiementPage() {
     return (
       <div className="max-w-md mx-auto mt-10 p-6 border rounded shadow text-center">
         <h2 className="text-xl font-bold mb-4">Création du paiement...</h2>
-        <div className="text-blue-600">Veuillez patienter...</div>
+        <div className="text-white">Veuillez patienter...</div>
       </div>
     );
   }

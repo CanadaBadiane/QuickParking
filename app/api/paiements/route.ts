@@ -214,7 +214,7 @@ export async function POST(request: NextRequest) {
     }
     if (duration < 10) {
       return NextResponse.json(
-        { success: false, error: "Durée trop courte (min 5 min)" },
+        { success: false, error: "Durée trop courte (min 10 min)" },
         { status: 400 }
       );
     }
@@ -261,6 +261,12 @@ export async function POST(request: NextRequest) {
     }
     const paiement = await prisma.paiement.create({
       data: paiementData,
+    });
+
+    // Met à jour la place pour la rendre non réservable et non disponible
+    await prisma.parkingSpot.update({
+      where: { parkingSpotId },
+      data: { canReserve: false, isAvailable: false },
     });
 
     return NextResponse.json(

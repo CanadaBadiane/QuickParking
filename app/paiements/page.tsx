@@ -44,7 +44,11 @@ function CheckoutForm() {
   };
 
   return (
-    <form className="flex flex-col gap-4" onSubmit={handleSubmit}>
+    <form
+      className="flex flex-col gap-4 max-w-xl w-full mx-auto"
+      style={{ minWidth: 350 }}
+      onSubmit={handleSubmit}
+    >
       <PaymentElement />
       {error && <div className="text-red-600">{error}</div>}
       <button
