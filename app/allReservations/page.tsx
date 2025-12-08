@@ -111,7 +111,7 @@ export default function AllReservationsPage() {
                 onClick={() =>
                   handleReservationClick(reservation.reservationId)
                 }
-                className={`bg-white rounded-lg shadow p-6 hover:shadow-lg hover:bg-gradient-to-br hover:from-purple-200 hover:to-purple-400 cursor-pointer ${
+                className={`bg-white rounded-lg shadow p-6 hover:shadow-lg hover:bg-linear-to-br hover:from-purple-200 hover:to-purple-400 cursor-pointer ${
                   selectedReservationId === reservation.reservationId
                     ? "ring-2 ring-blue-500"
                     : ""

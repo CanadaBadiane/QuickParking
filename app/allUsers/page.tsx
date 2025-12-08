@@ -105,7 +105,7 @@ export default function AllUsersPage() {
               <div
                 key={user.userId}
                 onClick={() => handleUserClick(user.userId)}
-                className={`bg-white rounded-lg shadow p-6 hover:shadow-lg hover:bg-gradient-to-br hover:from-purple-200 hover:to-purple-400 cursor-pointer ${
+                className={`bg-white rounded-lg shadow p-6 hover:shadow-lg hover:bg-linear-to-br hover:from-purple-200 hover:to-purple-400 cursor-pointer ${
                   selectedUserId === user.userId ? "ring-2 ring-blue-500" : ""
                 }`}
               >

@@ -67,7 +67,7 @@ export default function PaiementHistoryPage() {
               <div
                 key={p.paiementId}
                 onClick={() => setSelectedPaiementId(p.paiementId)}
-                className={`bg-white rounded-lg shadow p-6 hover:bg-gradient-to-br hover:from-purple-200 hover:to-purple-400 cursor-pointer ${
+                className={`bg-white rounded-lg shadow p-6 hover:bg-linear-to-br hover:from-purple-200 hover:to-purple-400 cursor-pointer ${
                   selectedPaiementId === p.paiementId
                     ? "ring-2 ring-blue-500"
                     : ""
