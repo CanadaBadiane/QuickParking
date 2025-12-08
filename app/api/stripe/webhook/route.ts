@@ -7,6 +7,7 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
 });
 
 export async function POST(request: NextRequest) {
+  console.log("[STRIPE WEBHOOK] Appel reçu à ", new Date().toISOString());
   const sig = request.headers.get("stripe-signature");
   const buf = await request.arrayBuffer();
   let event;
@@ -34,10 +35,19 @@ export async function POST(request: NextRequest) {
       where: { stripePaymentIntentId: paymentIntent.id },
     });
     if (paiement) {
-      // Met à jour le statut du paiement
+      // Calcule startDateTime et endDateTime
+      const startDateTime = new Date();
+      const endDateTime = new Date(
+        startDateTime.getTime() + (paiement.duration ?? 0) * 60000
+      );
+      // Met à jour le statut du paiement et les dates
       await prisma.paiement.update({
         where: { paiementId: paiement.paiementId },
-        data: { status: "completed" },
+        data: {
+          status: "completed",
+          startDateTime,
+          endDateTime,
+        },
       });
       // Met à jour la place de parking liée
       await prisma.parkingSpot.update({
@@ -64,7 +74,11 @@ export async function POST(request: NextRequest) {
     if (paiement) {
       await prisma.paiement.update({
         where: { paiementId: paiement.paiementId },
-        data: { status: "failed" },
+        data: {
+          status: "failed",
+          startDateTime: null,
+          endDateTime: null,
+        },
       });
     }
   }

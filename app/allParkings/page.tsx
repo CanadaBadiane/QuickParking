@@ -29,7 +29,12 @@ export default function AllParkingsPage() {
         });
         const data = await res.json();
         if (data.success) {
-          setParkings(data.data);
+          const sorted = Array.isArray(data.data)
+            ? [...data.data].sort((a, b) =>
+                a.parkingSpotId.localeCompare(b.parkingSpotId)
+              )
+            : [];
+          setParkings(sorted);
         } else {
           toast.error(data.error || "Erreur lors du chargement des parkings");
         }

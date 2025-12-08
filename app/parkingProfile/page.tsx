@@ -122,6 +122,18 @@ export default function ParkingProfilePage() {
             >
               Réserver
             </button>
+            <button
+              className="bg-yellow-500 text-white px-6 py-2 rounded hover:bg-yellow-600"
+              onClick={() => {
+                localStorage.setItem(
+                  "selectedParkingSpotId",
+                  parkingSpot.parkingSpotId
+                );
+                router.push("/pre-paiements");
+              }}
+            >
+              Payer
+            </button>
             <a
               href={`https://www.google.com/maps/dir/?api=1&destination=${parkingSpot.lat},${parkingSpot.lng}`}
               target="_blank"

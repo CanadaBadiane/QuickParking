@@ -35,7 +35,7 @@ export async function GET(
         { status: 403 }
       );
     }
-    const { id } = params;
+    const { id } = await params;
     const paiement = await prisma.paiement.findUnique({
       where: { paiementId: id },
     });

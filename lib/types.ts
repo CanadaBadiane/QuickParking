@@ -54,5 +54,7 @@ export interface Paiement {
   duration: number; // en minutes
   method: "card";
   status: "pending" | "completed" | "failed";
+  startDateTime?: string | null;
+  endDateTime?: string | null;
   createdAt: string;
 }

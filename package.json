@@ -16,6 +16,7 @@
     "@clerk/nextjs": "^6.35.5",
     "@prisma/adapter-neon": "^7.0.1",
     "@prisma/client": "^7.0.1",
+    "@stripe/react-stripe-js": "^5.4.1",
     "@stripe/stripe-js": "^8.5.3",
     "bcrypt": "^6.0.0",
     "date-fns-tz": "^3.2.0",

@@ -28,7 +28,9 @@ export async function GET(request: NextRequest) {
         { status: 401 }
       );
     }
-    const user = await prisma.user.findFirst({ where: { clerkId: payload.sub, deletedAt: null } });
+    const user = await prisma.user.findFirst({
+      where: { clerkId: payload.sub, deletedAt: null },
+    });
     if (!user) {
       return NextResponse.json(
         { success: false, error: "Utilisateur non trouvé ou supprimé" },
@@ -75,7 +77,9 @@ export async function POST(request: NextRequest) {
     }
     const body = await request.json();
     // Vérifie le rôle dans la BDD : si admin, peut créer pour un autre user via clerkId
-    const user = await prisma.user.findFirst({ where: { clerkId: payload.sub, deletedAt: null } });
+    const user = await prisma.user.findFirst({
+      where: { clerkId: payload.sub, deletedAt: null },
+    });
     if (!user) {
       return NextResponse.json(
         { success: false, error: "Utilisateur non trouvé ou supprimé" },
@@ -84,15 +88,17 @@ export async function POST(request: NextRequest) {
     }
     const isAdmin = user.role === "admin";
     const targetClerkId = isAdmin && body.clerkId ? body.clerkId : payload.sub;
-    const targetUser = await prisma.user.findFirst({ where: { clerkId: targetClerkId, deletedAt: null } });
+    const targetUser = await prisma.user.findFirst({
+      where: { clerkId: targetClerkId, deletedAt: null },
+    });
     if (!targetUser) {
       return NextResponse.json(
         { success: false, error: "Utilisateur cible non trouvé ou supprimé" },
         { status: 403 }
       );
     }
-    const { parkingSpotId, duration, method } = body;
-    if (!parkingSpotId || !duration || !method) {
+    const { parkingSpotId, duration } = body;
+    if (!parkingSpotId || !duration) {
       return NextResponse.json(
         { success: false, error: "Champs requis manquants" },
         { status: 400 }
@@ -106,6 +112,30 @@ export async function POST(request: NextRequest) {
         { success: false, error: "Place de stationnement introuvable" },
         { status: 404 }
       );
+    }
+
+    // Vérifier s'il existe un paiement en cours (non terminé) pour cette place
+    const paiementEnCours = await prisma.paiement.findFirst({
+      where: {
+        parkingSpotId,
+        status: "pending",
+      },
+      orderBy: { createdAt: "desc" },
+    });
+    if (paiementEnCours) {
+      const now = Date.now();
+      const createdAt = new Date(paiementEnCours.createdAt).getTime();
+      // Si le paiement pending a plus de 10 minutes, on autorise un nouveau paiement
+      if (now - createdAt < 600000) {
+        return NextResponse.json(
+          {
+            success: false,
+            error: "Paiement en cours pour cette place",
+            message: "Impossible de payer tant qu'un paiement est actif.",
+          },
+          { status: 400 }
+        );
+      }
     }
     // Vérifie le dernier paiement sur cette place
     const lastPaiement = await prisma.paiement.findFirst({
@@ -148,13 +178,41 @@ export async function POST(request: NextRequest) {
         }
       }
     }
-    if (!spot || !spot.isAvailable || !spot.canReserve) {
-      return NextResponse.json(
-        { success: false, error: "Place non disponible" },
-        { status: 400 }
-      );
+
+    // Vérifie si le user connecté a une réservation active pour cette place
+    let activeReservation = await prisma.reservation.findFirst({
+      where: {
+        userId: user.userId,
+        parkingSpotId,
+        status: "active",
+      },
+    });
+    // Si une réservation active existe, vérifier qu'elle n'est pas expirée
+    if (activeReservation) {
+      const now = new Date();
+      const end = new Date(activeReservation.endDateTime);
+      if (end < now) {
+        // Expirée : on la passe à completed
+        await prisma.reservation.update({
+          where: { reservationId: activeReservation.reservationId },
+          data: { status: "completed" },
+        });
+        activeReservation = null;
+      }
     }
-    if (duration < 5) {
+    // Si la place n'est pas dispo/canReserve, mais le user a une réservation active valide, on autorise
+    if (!spot || !spot.isAvailable || !spot.canReserve) {
+      if (!activeReservation) {
+        return NextResponse.json(
+          {
+            success: false,
+            error: "Place non disponible ou réservation expirée",
+          },
+          { status: 400 }
+        );
+      }
+    }
+    if (duration < 10) {
       return NextResponse.json(
         { success: false, error: "Durée trop courte (min 5 min)" },
         { status: 400 }
@@ -169,13 +227,6 @@ export async function POST(request: NextRequest) {
         { status: 400 }
       );
     }
-    const activeReservation = await prisma.reservation.findFirst({
-      where: {
-        userId: user.userId,
-        parkingSpotId,
-        status: "active",
-      },
-    });
     const reservationId = activeReservation
       ? activeReservation.reservationId
       : undefined;
@@ -200,7 +251,7 @@ export async function POST(request: NextRequest) {
       parkingSpotId,
       amount,
       duration,
-      method,
+      method: "card",
       status: "pending",
       createdAt: new Date(),
       stripePaymentIntentId: paymentIntent.id,

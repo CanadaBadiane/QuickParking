@@ -78,6 +78,8 @@ model Paiement {
   duration       Int
   method         String @default("card")
   status         PaiementStatus
+  startDateTime  DateTime?
+  endDateTime    DateTime?
   createdAt      DateTime    @default(now())
 
   user           User        @relation(fields: [userId], references: [userId])
