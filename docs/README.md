@@ -139,6 +139,20 @@ npm run dev
 
 L'application sera accessible sur `http://localhost:3000`
 
+### Configuration Stripe (webhook local)
+
+Pour tester les paiements en local, vous devez configurer le webhook Stripe :
+
+```bash
+# 1. Connectez-vous à Stripe CLI
+stripe login
+
+# 2. Lancez le webhook listener (dans un terminal séparé)
+stripe listen --forward-to localhost:3000/api/stripe/webhook
+```
+
+Le webhook secret (`whsec_...`) affiché doit être copié dans votre `.env.local` comme `STRIPE_WEBHOOK_SECRET`
+
 ### Production
 
 ```bash
