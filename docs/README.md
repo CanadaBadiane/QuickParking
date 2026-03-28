@@ -52,7 +52,6 @@ Les administrateurs peuvent gérer l'ensemble du système (utilisateurs, parking
 ### Frontend
 
 - **Next.js 16** - Framework React avec App Router
-- **React 19** - Bibliothèque UI
 - **TypeScript** - Typage statique
 - **Tailwind CSS 4** - Framework CSS
 
@@ -72,7 +71,6 @@ Les administrateurs peuvent gérer l'ensemble du système (utilisateurs, parking
 ### Outils de développement
 
 - **ESLint** - Linting
-- **PostCSS** - Transformation CSS
 - **tsx** - Exécution TypeScript
 - **bcrypt** - Hashing de mots de passe
 
