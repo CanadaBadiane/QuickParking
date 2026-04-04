@@ -51,7 +51,7 @@ model Reservation {
   parkingSpotId   String
   startDateTime   DateTime    @default(now())
   endDateTime     DateTime
-  extraMinutes    String?
+  extraMinutes    Int?
   status          ReservationStatus
   createdAt       DateTime    @default(now())
   updatedAt       DateTime    @updatedAt

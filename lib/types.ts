@@ -34,7 +34,7 @@ export interface Reservation {
   parkingSpotId: string;
   startDateTime: string;
   endDateTime: string;
-  extraMinutes?: string;
+  extraMinutes?: number;
   status: "active" | "completed" | "cancelled";
   createdAt: string;
   updatedAt: string;
