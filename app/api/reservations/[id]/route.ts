@@ -5,21 +5,21 @@ import { prisma } from "@/lib/prisma";
 // GET /api/reservations/[id] - Récupérer une réservation par son ID
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: { id: string } },
 ) {
   try {
     const { id } = await params;
     if (!id || typeof id !== "string" || id.trim() === "") {
       return NextResponse.json(
         { success: false, error: "ID de réservation manquant ou invalide" },
-        { status: 400 }
+        { status: 400 },
       );
     }
     const authHeader = request.headers.get("authorization");
     if (!authHeader) {
       return NextResponse.json(
         { success: false, error: "Non authentifié" },
-        { status: 401 }
+        { status: 401 },
       );
     }
     const token = authHeader.replace("Bearer ", "");
@@ -31,7 +31,7 @@ export async function GET(
     } catch (e) {
       return NextResponse.json(
         { success: false, error: "Token invalide" },
-        { status: 401 }
+        { status: 401 },
       );
     }
     // Chercher la réservation en BDD
@@ -41,7 +41,7 @@ export async function GET(
     if (!reservation) {
       return NextResponse.json(
         { success: false, error: "Réservation non trouvée" },
-        { status: 404 }
+        { status: 404 },
       );
     }
     // Vérifier l'accès (propriétaire ou admin)
@@ -55,7 +55,7 @@ export async function GET(
     ) {
       return NextResponse.json(
         { success: false, error: "Accès refusé ou utilisateur supprimé" },
-        { status: 403 }
+        { status: 403 },
       );
     }
     // Mise à jour automatique du statut à 'completed' si la date de fin est dépassée
@@ -86,7 +86,7 @@ export async function GET(
         error: "Erreur serveur lors de la récupération de la réservation",
         message: error instanceof Error ? error.message : String(error),
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -94,7 +94,7 @@ export async function GET(
 // Modifier le temps de réservation
 export async function PATCH(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: { id: string } },
 ) {
   try {
     const { id } = await params;
@@ -102,7 +102,7 @@ export async function PATCH(
     if (!authHeader) {
       return NextResponse.json(
         { success: false, error: "Non authentifié" },
-        { status: 401 }
+        { status: 401 },
       );
     }
     const token = authHeader.replace("Bearer ", "");
@@ -114,7 +114,7 @@ export async function PATCH(
     } catch (e) {
       return NextResponse.json(
         { success: false, error: "Token invalide" },
-        { status: 401 }
+        { status: 401 },
       );
     }
     // Chercher la réservation en BDD
@@ -124,7 +124,7 @@ export async function PATCH(
     if (!reservation) {
       return NextResponse.json(
         { error: "Réservation non trouvée" },
-        { status: 404 }
+        { status: 404 },
       );
     }
     // Chercher l'utilisateur
@@ -138,14 +138,14 @@ export async function PATCH(
     ) {
       return NextResponse.json(
         { success: false, error: "Accès refusé ou utilisateur supprimé" },
-        { status: 403 }
+        { status: 403 },
       );
     }
     // Empêcher toute modification si la réservation n'est pas active
     if (reservation.status !== "active") {
       return NextResponse.json(
         { error: "Impossible de modifier une réservation non active." },
-        { status: 400 }
+        { status: 400 },
       );
     }
     // Mise à jour automatique du statut à 'completed' si la date de fin est dépassée
@@ -161,7 +161,7 @@ export async function PATCH(
       });
       return NextResponse.json(
         { error: "Impossible de modifier une réservation terminée." },
-        { status: 400 }
+        { status: 400 },
       );
     }
     // Récupérer la durée supplémentaire depuis le body
@@ -182,7 +182,7 @@ export async function PATCH(
     if (typeof extraMinutes !== "number" || extraMinutes <= 0) {
       return NextResponse.json(
         { error: "Durée supplémentaire invalide" },
-        { status: 400 }
+        { status: 400 },
       );
     }
     // Calculer la durée totale en minutes
@@ -193,14 +193,16 @@ export async function PATCH(
     if (dureeTotale > 15) {
       return NextResponse.json(
         { error: "Durée maximale dépassée (15 min)" },
-        { status: 400 }
+        { status: 400 },
       );
     }
     // Mettre à jour la dateHeureFin
     const newEnd = new Date(end.getTime() + extraMinutes * 60 * 1000);
+    const totalExtraMinutes = (reservation.extraMinutes || 0) + extraMinutes;
+
     const updated = await prisma.reservation.update({
       where: { reservationId: id },
-      data: { endDateTime: newEnd },
+      data: { endDateTime: newEnd, extraMinutes: totalExtraMinutes },
     });
     return NextResponse.json({ success: true, data: updated });
   } catch (error) {
@@ -210,7 +212,7 @@ export async function PATCH(
         error: "Erreur serveur lors de la modification de la réservation",
         message: error instanceof Error ? error.message : String(error),
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
