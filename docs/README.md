@@ -364,8 +364,4 @@ La collection Postman est disponible dans `postman/QuickParking.postman_collecti
 
 - GitHub: [@CanadaBadiane](https://github.com/CanadaBadiane)
 
-## Licence
-
-Ce projet a été développé dans le cadre d'un cours d'applications web transactionnelles.
-
 ---
