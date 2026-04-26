@@ -13,7 +13,7 @@ export async function GET(request: NextRequest) {
     if (!authHeader) {
       return NextResponse.json(
         { success: false, error: "Non authentifié" },
-        { status: 401 }
+        { status: 401 },
       );
     }
     const token = authHeader.replace("Bearer ", "");
@@ -25,7 +25,7 @@ export async function GET(request: NextRequest) {
     } catch (e) {
       return NextResponse.json(
         { success: false, error: "Token invalide" },
-        { status: 401 }
+        { status: 401 },
       );
     }
     const user = await prisma.user.findFirst({
@@ -34,7 +34,7 @@ export async function GET(request: NextRequest) {
     if (!user) {
       return NextResponse.json(
         { success: false, error: "Utilisateur non trouvé ou supprimé" },
-        { status: 403 }
+        { status: 403 },
       );
     }
     const paiements = await prisma.paiement.findMany({
@@ -48,7 +48,7 @@ export async function GET(request: NextRequest) {
         error: "Erreur serveur lors de la récupération des paiements",
         message: error instanceof Error ? error.message : String(error),
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -60,7 +60,7 @@ export async function POST(request: NextRequest) {
     if (!authHeader) {
       return NextResponse.json(
         { success: false, error: "Non authentifié" },
-        { status: 401 }
+        { status: 401 },
       );
     }
     const token = authHeader.replace("Bearer ", "");
@@ -72,7 +72,7 @@ export async function POST(request: NextRequest) {
     } catch (e) {
       return NextResponse.json(
         { success: false, error: "Token invalide" },
-        { status: 401 }
+        { status: 401 },
       );
     }
     const body = await request.json();
@@ -83,7 +83,7 @@ export async function POST(request: NextRequest) {
     if (!user) {
       return NextResponse.json(
         { success: false, error: "Utilisateur non trouvé ou supprimé" },
-        { status: 403 }
+        { status: 403 },
       );
     }
     const isAdmin = user.role === "admin";
@@ -94,14 +94,14 @@ export async function POST(request: NextRequest) {
     if (!targetUser) {
       return NextResponse.json(
         { success: false, error: "Utilisateur cible non trouvé ou supprimé" },
-        { status: 403 }
+        { status: 403 },
       );
     }
     const { parkingSpotId, duration } = body;
     if (!parkingSpotId || !duration) {
       return NextResponse.json(
         { success: false, error: "Champs requis manquants" },
-        { status: 400 }
+        { status: 400 },
       );
     }
     let spot = await prisma.parkingSpot.findUnique({
@@ -110,7 +110,7 @@ export async function POST(request: NextRequest) {
     if (!spot) {
       return NextResponse.json(
         { success: false, error: "Place de stationnement introuvable" },
-        { status: 404 }
+        { status: 404 },
       );
     }
 
@@ -133,7 +133,7 @@ export async function POST(request: NextRequest) {
             error: "Paiement en cours pour cette place",
             message: "Impossible de payer tant qu'un paiement est actif.",
           },
-          { status: 400 }
+          { status: 400 },
         );
       }
     }
@@ -182,7 +182,7 @@ export async function POST(request: NextRequest) {
     // Vérifie si le user connecté a une réservation active pour cette place
     let activeReservation = await prisma.reservation.findFirst({
       where: {
-        userId: user.userId,
+        userId: targetUser.userId,
         parkingSpotId,
         status: "active",
       },
@@ -208,14 +208,14 @@ export async function POST(request: NextRequest) {
             success: false,
             error: "Place non disponible ou réservation expirée",
           },
-          { status: 400 }
+          { status: 400 },
         );
       }
     }
     if (duration < 10) {
       return NextResponse.json(
         { success: false, error: "Durée trop courte (min 10 min)" },
-        { status: 400 }
+        { status: 400 },
       );
     }
     if (!spot || duration > spot.maxDuration) {
@@ -224,7 +224,7 @@ export async function POST(request: NextRequest) {
           success: false,
           error: `Durée trop longue (max ${spot ? spot.maxDuration : "?"} min)`,
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
     const reservationId = activeReservation
@@ -246,8 +246,8 @@ export async function POST(request: NextRequest) {
 
     // Création du paiement en BDD avec statut 'pending'
     const paiementData: any = {
-      clerkId: user.clerkId,
-      userId: user.userId,
+      clerkId: targetUser.clerkId,
+      userId: targetUser.userId,
       parkingSpotId,
       amount,
       duration,
@@ -276,7 +276,7 @@ export async function POST(request: NextRequest) {
         clientSecret: paymentIntent.client_secret,
         message: "PaymentIntent Stripe créé, prêt pour paiement côté client.",
       },
-      { status: 201 }
+      { status: 201 },
     );
   } catch (error) {
     return NextResponse.json(
@@ -285,7 +285,7 @@ export async function POST(request: NextRequest) {
         error: "Erreur serveur lors de la création du paiement",
         message: error instanceof Error ? error.message : String(error),
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
