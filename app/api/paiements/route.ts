@@ -104,7 +104,7 @@ export async function POST(request: NextRequest) {
         { status: 400 },
       );
     }
-    let spot = await prisma.parkingSpot.findUnique({
+    const spot = await prisma.parkingSpot.findUnique({
       where: { parkingSpotId },
     });
     if (!spot) {
@@ -114,70 +114,8 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Vérifier s'il existe un paiement en cours (non terminé) pour cette place
-    const paiementEnCours = await prisma.paiement.findFirst({
-      where: {
-        parkingSpotId,
-        status: "pending",
-      },
-      orderBy: { createdAt: "desc" },
-    });
-    if (paiementEnCours) {
-      const now = Date.now();
-      const createdAt = new Date(paiementEnCours.createdAt).getTime();
-      // Si le paiement pending a plus de 10 minutes, on autorise un nouveau paiement
-      if (now - createdAt < 600000) {
-        return NextResponse.json(
-          {
-            success: false,
-            error: "Paiement en cours pour cette place",
-            message: "Impossible de payer tant qu'un paiement est actif.",
-          },
-          { status: 400 },
-        );
-      }
-    }
-    // Vérifie le dernier paiement sur cette place
-    const lastPaiement = await prisma.paiement.findFirst({
-      where: { parkingSpotId },
-      orderBy: { createdAt: "desc" },
-    });
-    if (lastPaiement && !spot.isAvailable) {
-      const endTime =
-        new Date(lastPaiement.createdAt).getTime() +
-        (lastPaiement.duration ?? 0) * 60000;
-      if (Date.now() > endTime) {
-        // Le paiement est expiré, on rend la place disponible
-        await prisma.parkingSpot.update({
-          where: { parkingSpotId },
-          data: { isAvailable: true, canReserve: true },
-        });
-        spot = await prisma.parkingSpot.findUnique({
-          where: { parkingSpotId },
-        });
-      }
-    }
-
-    // Vérifie la réservation active sur cette place si canReserve est false
-    if (spot && !spot.canReserve) {
-      const lastReservation = await prisma.reservation.findFirst({
-        where: { parkingSpotId, status: "active" },
-        orderBy: { endDateTime: "desc" },
-      });
-      if (lastReservation) {
-        const endTime = new Date(lastReservation.endDateTime).getTime();
-        if (Date.now() > endTime) {
-          // La réservation est expirée, on rend la place réservable
-          await prisma.parkingSpot.update({
-            where: { parkingSpotId },
-            data: { canReserve: true },
-          });
-          spot = await prisma.parkingSpot.findUnique({
-            where: { parkingSpotId },
-          });
-        }
-      }
-    }
+    // On ne recalcule plus canReserve/isAvailable ici : le webhook Stripe et
+    // /api/parking-spots sont la seule source de vérité pour ces champs.
 
     // Vérifie si le user connecté a une réservation active pour cette place
     let activeReservation = await prisma.reservation.findFirst({

@@ -197,41 +197,9 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Vérifier s'il existe un paiement en cours (non terminé) pour cette place
-    const paiementEnCours = await prisma.paiement.findFirst({
-      where: {
-        parkingSpotId,
-        status: "pending",
-      },
-      orderBy: { createdAt: "desc" },
-    });
-    if (paiementEnCours) {
-      const fin =
-        new Date(paiementEnCours.createdAt).getTime() +
-        (paiementEnCours.duration ?? 0) * 60000;
-      // Si le paiement est expiré, rendre la place disponible
-      if (Date.now() > fin && !parkingSpot.isAvailable) {
-        await prisma.parkingSpot.update({
-          where: { parkingSpotId },
-          data: { isAvailable: true },
-        });
-        parkingSpot = await prisma.parkingSpot.findUnique({
-          where: { parkingSpotId },
-        });
-      }
-      // Si le paiement est encore actif, empêcher la réservation
-      if (Date.now() < fin) {
-        return NextResponse.json(
-          {
-            success: false,
-            error: "Paiement en cours pour cette place",
-            message: "Impossible de réserver tant qu'un paiement est actif.",
-          },
-          { status: 400 }
-        );
-      }
-    }
-
+    // On ne bloque plus sur un paiement "pending" (peut être un essai
+    // abandonné qui ne se confirmera jamais) : seuls canReserve/isAvailable
+    // font foi, tenus à jour par le webhook Stripe et par /api/parking-spots.
     if (!parkingSpot || !parkingSpot.isAvailable || !parkingSpot.canReserve) {
       return NextResponse.json(
         {

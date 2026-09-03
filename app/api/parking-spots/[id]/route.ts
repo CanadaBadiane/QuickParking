@@ -44,7 +44,7 @@ export async function GET(
       );
     }
 
-    // Vérifier les réservations actives pour cette place et mettre à jour leur statut si besoin
+    // Marque comme "completed" les réservations actives dont la période est passée
     const nowUTC = new Date();
     await prisma.reservation.updateMany({
       where: {
@@ -55,25 +55,37 @@ export async function GET(
       data: { status: "completed" },
     });
 
-    // Vérifier le paiement en cours pour cette place
-    const paiementEnCours = await prisma.paiement.findFirst({
+    // Même logique que /api/parking-spots : la place reste bloquée tant
+    // qu'il existe une réservation active ou un paiement complété dont la
+    // période court encore. On exclut explicitement les endDateTime nulles
+    // (paiements pending/failed) pour ne pas fausser le calcul.
+    const activeReservation = await prisma.reservation.findFirst({
       where: {
         parkingSpotId: Params.id,
-        status: "pending",
+        status: "active",
+        endDateTime: { gte: nowUTC },
       },
-      orderBy: { createdAt: "desc" },
     });
-    if (paiementEnCours) {
-      const fin =
-        new Date(paiementEnCours.createdAt).getTime() +
-        (paiementEnCours.duration ?? 0) * 60000;
-      if (Date.now() > fin && !parkingSpot.isAvailable) {
-        await prisma.parkingSpot.update({
-          where: { parkingSpotId: Params.id },
-          data: { isAvailable: true },
-        });
-        parkingSpot.isAvailable = true;
-      }
+    const ongoingPaiement = await prisma.paiement.findFirst({
+      where: {
+        parkingSpotId: Params.id,
+        status: "completed",
+        endDateTime: { not: null, gte: nowUTC },
+      },
+    });
+
+    const isBlocked = Boolean(activeReservation || ongoingPaiement);
+    const canReserve = !isBlocked;
+    const isAvailable = !isBlocked;
+
+    if (
+      parkingSpot.canReserve !== canReserve ||
+      parkingSpot.isAvailable !== isAvailable
+    ) {
+      await prisma.parkingSpot.update({
+        where: { parkingSpotId: Params.id },
+        data: { canReserve, isAvailable },
+      });
     }
 
     // Relire la place depuis la BDD pour garantir que les champs sont à jour

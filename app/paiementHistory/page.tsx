@@ -46,13 +46,14 @@ export default function PaiementHistoryPage() {
     if (isSignedIn) fetchPaiements();
   }, [isSignedIn, getToken]);
 
+  useEffect(() => {
+    if (selectedPaiementId) {
+      router.push(`/paiementProfile?id=${selectedPaiementId}`);
+    }
+  }, [selectedPaiementId, router]);
+
   if (!isLoaded || loading) return <Loading />;
   if (!isSignedIn) return <div className="text-red-600">Accès refusé</div>;
-
-  if (selectedPaiementId) {
-    router.push(`/paiementProfile?id=${selectedPaiementId}`);
-    return null;
-  }
 
   return (
     <>

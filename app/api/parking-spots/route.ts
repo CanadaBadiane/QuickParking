@@ -26,88 +26,60 @@ export async function GET(request: NextRequest) {
     }
     const parkingSpots = await prisma.parkingSpot.findMany();
     const now = new Date();
-    // Pour chaque parking, on récupère la dernière réservation (endDateTime la plus récente)
+    // Pour chaque parking, on vérifie s'il reste bloqué par une réservation
+    // active ou un paiement complété dont la période n'est pas terminée.
     const updatedSpots = await Promise.all(
       parkingSpots.map(async (spot) => {
-        // Met à jour le statut des réservations actives expirées pour ce parking
-        const activeReservations = await prisma.reservation.findMany({
+        // Marque comme "completed" les réservations actives dont la période est passée
+        const expiredReservations = await prisma.reservation.findMany({
           where: {
             parkingSpotId: spot.parkingSpotId,
             status: "active",
-            endDateTime: { lt: new Date() },
+            endDateTime: { lt: now },
           },
         });
-        for (const res of activeReservations) {
+        for (const res of expiredReservations) {
           await prisma.reservation.update({
             where: { reservationId: res.reservationId },
             data: { status: "completed" },
           });
         }
-        // Vérifie s'il y a un paiement pending
-        const paiementPending = await prisma.paiement.findFirst({
+
+        // Cherche une réservation encore active OU un paiement complété dont
+        // la période court toujours. On exclut explicitement les endDateTime
+        // nulles (paiements pending/failed) pour ne jamais laisser un vieil
+        // enregistrement incomplet fausser le calcul.
+        const activeReservation = await prisma.reservation.findFirst({
           where: {
             parkingSpotId: spot.parkingSpotId,
-            status: "pending",
+            status: "active",
+            endDateTime: { gte: now },
           },
-          orderBy: { createdAt: "desc" },
         });
-        let forceFalse = false;
-        if (paiementPending) {
-          const nowMs = Date.now();
-          const createdAtMs = new Date(paiementPending.createdAt).getTime();
-          if (nowMs - createdAtMs < 600000) {
-            forceFalse = true;
-            await prisma.parkingSpot.update({
-              where: { parkingSpotId: spot.parkingSpotId },
-              data: { canReserve: false, isAvailable: false },
-            });
-          } else {
-            await prisma.parkingSpot.update({
-              where: { parkingSpotId: spot.parkingSpotId },
-              data: { canReserve: true, isAvailable: true },
-            });
-          }
-        }
-        // Récupère la dernière réservation
-        const lastReservation = await prisma.reservation.findFirst({
-          where: { parkingSpotId: spot.parkingSpotId },
-          orderBy: { endDateTime: "desc" },
+        const ongoingPaiement = await prisma.paiement.findFirst({
+          where: {
+            parkingSpotId: spot.parkingSpotId,
+            status: "completed",
+            endDateTime: { not: null, gte: now },
+          },
         });
-        // Récupère le dernier paiement
-        const lastPaiement = await prisma.paiement.findFirst({
-          where: { parkingSpotId: spot.parkingSpotId },
-          orderBy: { endDateTime: "desc" },
-        });
-        // Compare les deux endDateTime
-        let lastEndDate: Date | null = null;
-        if (lastReservation?.endDateTime && lastPaiement?.endDateTime) {
-          lastEndDate = new Date(
-            new Date(lastReservation.endDateTime) >
-            new Date(lastPaiement.endDateTime)
-              ? lastReservation.endDateTime
-              : lastPaiement.endDateTime
-          );
-        } else if (lastReservation?.endDateTime) {
-          lastEndDate = new Date(lastReservation.endDateTime);
-        } else if (lastPaiement?.endDateTime) {
-          lastEndDate = new Date(lastPaiement.endDateTime);
+
+        const isBlocked = Boolean(activeReservation || ongoingPaiement);
+        const canReserve = !isBlocked;
+        const isAvailable = !isBlocked;
+
+        // On n'écrit en BDD que si la valeur calculée diffère de celle déjà
+        // stockée, pour éviter une écriture inutile à chaque chargement.
+        if (
+          spot.canReserve !== canReserve ||
+          spot.isAvailable !== isAvailable
+        ) {
+          await prisma.parkingSpot.update({
+            where: { parkingSpotId: spot.parkingSpotId },
+            data: { canReserve, isAvailable },
+          });
         }
-        let canReserve = true;
-        let isAvailable = true;
-        if (forceFalse) {
-          canReserve = false;
-          isAvailable = false;
-        }
-        if (lastEndDate) {
-          const isPast = lastEndDate < now;
-          canReserve = isPast ? true : false;
-          isAvailable = isPast ? true : false;
-        }
-        // Met à jour le parking spot en base de données
-        await prisma.parkingSpot.update({
-          where: { parkingSpotId: spot.parkingSpotId },
-          data: { canReserve, isAvailable },
-        });
+
         return { ...spot, canReserve, isAvailable };
       })
     );

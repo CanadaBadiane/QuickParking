@@ -15,7 +15,7 @@ export async function POST(request: NextRequest) {
     event = stripe.webhooks.constructEvent(
       Buffer.from(buf),
       sig!,
-      process.env.STRIPE_WEBHOOK_SECRET!
+      process.env.STRIPE_WEBHOOK_SECRET!,
     );
   } catch (err) {
     return NextResponse.json(
@@ -24,7 +24,7 @@ export async function POST(request: NextRequest) {
         error: "Signature Stripe invalide",
         message: err instanceof Error ? err.message : String(err),
       },
-      { status: 400 }
+      { status: 400 },
     );
   }
 
@@ -38,7 +38,7 @@ export async function POST(request: NextRequest) {
       // Calcule startDateTime et endDateTime
       const startDateTime = new Date();
       const endDateTime = new Date(
-        startDateTime.getTime() + (paiement.duration ?? 0) * 60000
+        startDateTime.getTime() + (paiement.duration ?? 0) * 60000,
       );
       // Met à jour le statut du paiement et les dates
       await prisma.paiement.update({
