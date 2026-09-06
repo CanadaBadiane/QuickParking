@@ -13,14 +13,24 @@ import Header from "../components/Header";
 // Page pour afficher tous les parkings
 export default function AllParkingsPage() {
   const [filter, setFilter] = useState<"all" | "available" | "unavailable">(
-    "all"
+    "all",
   );
+  const [selectedDistricts, setSelectedDistricts] = useState<string[]>([]);
+
+  const toggleDistrict = (district: string) => {
+    if (selectedDistricts.includes(district)) {
+      setSelectedDistricts(selectedDistricts.filter((t) => t !== district));
+    } else {
+      setSelectedDistricts([...selectedDistricts, district]);
+    }
+  };
   const { isSignedIn, isLoaded, getToken } = useAuth();
   const router = useRouter();
+  const [isOpen, setIsOpen] = useState<boolean>(false);
   const [parkings, setParkings] = useState<ParkingSpot[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedParkingId, setSelectedParkingId] = useState<string | null>(
-    null
+    null,
   );
 
   useEffect(() => {
@@ -36,7 +46,7 @@ export default function AllParkingsPage() {
         if (data.success) {
           const sorted = Array.isArray(data.data)
             ? [...data.data].sort((a, b) =>
-                a.parkingSpotId.localeCompare(b.parkingSpotId)
+                a.parkingSpotId.localeCompare(b.parkingSpotId),
               )
             : [];
           setParkings(sorted);
@@ -106,19 +116,77 @@ export default function AllParkingsPage() {
             >
               Non disponible
             </button>
+            <button
+              className={`px-4 py-2 rounded cursor-pointer ${
+                isOpen === true
+                  ? "bg-yellow-500"
+                  : "bg-white text-yellow-600 border"
+              }`}
+              onClick={() => setIsOpen(!isOpen)}
+            >
+              Filtrer
+            </button>
+            {isOpen && (
+              <>
+                <div className="bg-white text-black px-4 py-4 rounded space-x-4">
+                  <input
+                    type="checkbox"
+                    checked={selectedDistricts.includes("Ville-Marie")}
+                    onChange={() => toggleDistrict("Ville-Marie")}
+                  />
+                  <label>Ville-Marie</label>
+                  <input
+                    type="checkbox"
+                    checked={selectedDistricts.includes(
+                      "Rosemont - La Petite-Patrie",
+                    )}
+                    onChange={() =>
+                      toggleDistrict("Rosemont - La Petite-Patrie")
+                    }
+                  />
+                  <label>Rosemont</label>
+                  <input
+                    type="checkbox"
+                    checked={selectedDistricts.includes(
+                      "Le Plateau-Mont-Royal",
+                    )}
+                    onChange={() => toggleDistrict("Le Plateau-Mont-Royal")}
+                  />
+                  <label>Le Plateau</label>
+                  <input
+                    type="checkbox"
+                    checked={selectedDistricts.includes(
+                      "Mercier - Hochelaga-Maisonneuve",
+                    )}
+                    onChange={() =>
+                      toggleDistrict("Mercier - Hochelaga-Maisonneuve")
+                    }
+                  />
+                  <label>Hochelaga-Maisonneuve</label>{" "}
+                </div>
+              </>
+            )}
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {(() => {
-              const filtered = parkings.filter((parking) => {
-                if (filter === "available") {
-                  return parking.canReserve && parking.isAvailable;
-                }
-                if (filter === "unavailable") {
-                  return !parking.canReserve || !parking.isAvailable;
-                }
-                return true;
-              });
+              const filtered = parkings
+                .filter((parking) => {
+                  if (filter === "available") {
+                    return parking.canReserve && parking.isAvailable;
+                  }
+                  if (filter === "unavailable") {
+                    return !parking.canReserve || !parking.isAvailable;
+                  }
+                  return true;
+                })
+                .filter((parking) => {
+                  if (selectedDistricts.length === 0) {
+                    return true;
+                  } else {
+                    return selectedDistricts.includes(parking.arrondissement);
+                  }
+                });
               if (filtered.length === 0) {
                 return (
                   <div className="col-span-full text-center text-2xl text-black mt-8">
