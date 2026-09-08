@@ -1,11 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
-import { verifyToken } from "@clerk/nextjs/server";
+import { verifyToken, clerkClient } from "@clerk/nextjs/server";
 import { prisma } from "@/lib/prisma";
 
 // GET /api/users/[id] - Retourne un utilisateur par son id
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: { id: string } },
 ) {
   try {
     const { id } = await params;
@@ -13,7 +13,7 @@ export async function GET(
     if (!authHeader || !authHeader.startsWith("Bearer ")) {
       return NextResponse.json(
         { success: false, error: "Token manquant" },
-        { status: 401 }
+        { status: 401 },
       );
     }
     const token = authHeader.replace("Bearer ", "");
@@ -25,26 +25,22 @@ export async function GET(
     } catch (e) {
       return NextResponse.json(
         { success: false, error: "Token invalide" },
-        { status: 401 }
+        { status: 401 },
       );
     }
-
 
     // Essaie de trouver l'utilisateur par userId ou clerkId, mais seulement s'il n'est pas supprimé
     let user = await prisma.user.findFirst({
       where: {
-        OR: [
-          { userId: id },
-          { clerkId: id }
-        ],
-        deletedAt: null
-      }
+        OR: [{ userId: id }, { clerkId: id }],
+        deletedAt: null,
+      },
     });
 
     if (!user) {
       return NextResponse.json(
         { success: false, error: "Utilisateur non trouvé ou supprimé" },
-        { status: 404 }
+        { status: 404 },
       );
     }
 
@@ -57,7 +53,7 @@ export async function GET(
     if (payload.sub !== user.clerkId && connectedUser?.role !== "admin") {
       return NextResponse.json(
         { success: false, error: "Accès refusé" },
-        { status: 403 }
+        { status: 403 },
       );
     }
     return NextResponse.json({ success: true, user });
@@ -68,7 +64,7 @@ export async function GET(
         error: "Erreur serveur lors de la récupération de l'utilisateur",
         message: error instanceof Error ? error.message : String(error),
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -76,7 +72,7 @@ export async function GET(
 // PATCH /api/users/[id] - Met à jour seulement les champs fournis d'un utilisateur
 export async function PATCH(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: { id: string } },
 ) {
   try {
     const { id } = await params;
@@ -84,7 +80,7 @@ export async function PATCH(
     if (!authHeader || !authHeader.startsWith("Bearer ")) {
       return NextResponse.json(
         { success: false, error: "Token manquant" },
-        { status: 401 }
+        { status: 401 },
       );
     }
     const token = authHeader.replace("Bearer ", "");
@@ -96,14 +92,16 @@ export async function PATCH(
     } catch (e) {
       return NextResponse.json(
         { success: false, error: "Token invalide" },
-        { status: 401 }
+        { status: 401 },
       );
     }
-    const user = await prisma.user.findFirst({ where: { userId: id, deletedAt: null } });
+    const user = await prisma.user.findFirst({
+      where: { userId: id, deletedAt: null },
+    });
     if (!user) {
       return NextResponse.json(
         { success: false, error: "Utilisateur non trouvé ou supprimé" },
-        { status: 404 }
+        { status: 404 },
       );
     }
 
@@ -115,7 +113,7 @@ export async function PATCH(
     if (payload.sub !== user.clerkId && connectedUser?.role !== "admin") {
       return NextResponse.json(
         { success: false, error: "Accès refusé" },
-        { status: 403 }
+        { status: 403 },
       );
     }
     const body = await request.json();
@@ -141,7 +139,7 @@ export async function PATCH(
         error: "Erreur serveur lors de la mise à jour de l'utilisateur",
         message: error instanceof Error ? error.message : String(error),
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -149,7 +147,7 @@ export async function PATCH(
 // DELETE /api/users/[id] - Supprimer un utilisateur existant
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: { id: string } },
 ) {
   try {
     const { id } = await params;
@@ -157,7 +155,7 @@ export async function DELETE(
     if (!authHeader || !authHeader.startsWith("Bearer ")) {
       return NextResponse.json(
         { success: false, error: "Token manquant" },
-        { status: 401 }
+        { status: 401 },
       );
     }
     const token = authHeader.replace("Bearer ", "");
@@ -169,14 +167,16 @@ export async function DELETE(
     } catch (e) {
       return NextResponse.json(
         { success: false, error: "Token invalide" },
-        { status: 401 }
+        { status: 401 },
       );
     }
-    const user = await prisma.user.findFirst({ where: { userId: id, deletedAt: null } });
+    const user = await prisma.user.findFirst({
+      where: { userId: id, deletedAt: null },
+    });
     if (!user) {
       return NextResponse.json(
         { success: false, error: "Utilisateur non trouvé ou déjà supprimé" },
-        { status: 404 }
+        { status: 404 },
       );
     }
 
@@ -188,13 +188,19 @@ export async function DELETE(
     if (payload.sub !== user.clerkId && connectedUser?.role !== "admin") {
       return NextResponse.json(
         { success: false, error: "Accès refusé" },
-        { status: 403 }
+        { status: 403 },
       );
     }
     await prisma.user.update({
       where: { userId: id },
-      data: { deletedAt: new Date() },
+      data: {
+        deletedAt: new Date(),
+        email: `deleted-${id}@deleted.local`,
+        name: "Utilisateur supprimé",
+        phone: null,
+      },
     });
+    await (await clerkClient()).users.deleteUser(user.clerkId);
     return NextResponse.json({ success: true });
   } catch (error) {
     return NextResponse.json(
@@ -203,7 +209,7 @@ export async function DELETE(
         error: "Erreur serveur lors de la suppression de l'utilisateur",
         message: error instanceof Error ? error.message : String(error),
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

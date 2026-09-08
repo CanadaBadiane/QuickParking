@@ -22,8 +22,6 @@ export interface User {
   email: string;
   phone?: string;
   role: "admin" | "user";
-  password: string;
-  confirmationPassword: string;
   deletedAt?: string | null;
   createdAt: string;
 }

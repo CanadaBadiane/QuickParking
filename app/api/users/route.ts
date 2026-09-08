@@ -1,5 +1,4 @@
 import { NextRequest, NextResponse } from "next/server";
-import bcrypt from "bcrypt";
 import { prisma } from "@/lib/prisma";
 import { verifyToken } from "@clerk/nextjs/server";
 
@@ -7,23 +6,13 @@ import { verifyToken } from "@clerk/nextjs/server";
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { name, email, password, phone, confirmationPassword, clerkId } =
-      body;
-    if (!name || !email || !password || !confirmationPassword) {
+    const { name, email, phone, clerkId } = body;
+    if (!name || !email) {
       return NextResponse.json(
         { success: false, error: "Champs requis manquants" },
-        { status: 400 }
+        { status: 400 },
       );
     }
-    if (password !== confirmationPassword) {
-      return NextResponse.json(
-        { success: false, error: "Les mots de passe ne correspondent pas" },
-        { status: 400 }
-      );
-    }
-    const plainPassword = password;
-    const saltRounds = 10;
-    const hashedPassword = await bcrypt.hash(plainPassword, saltRounds);
 
     // Vérifie si l'utilisateur existe déjà (email ou clerkId), actif ou supprimé
     const existingUser = await prisma.user.findFirst({
@@ -35,7 +24,7 @@ export async function POST(request: NextRequest) {
           success: false,
           error: "Email ou ClerkId déjà utilisé (même supprimé)",
         },
-        { status: 409 }
+        { status: 409 },
       );
     }
 
@@ -47,7 +36,7 @@ export async function POST(request: NextRequest) {
       if (!authHeader) {
         return NextResponse.json(
           { success: false, error: "Non authentifié (admin requis)" },
-          { status: 401 }
+          { status: 401 },
         );
       }
       const token = authHeader.replace("Bearer ", "");
@@ -59,7 +48,7 @@ export async function POST(request: NextRequest) {
       } catch (e) {
         return NextResponse.json(
           { success: false, error: "Token invalide (admin requis)" },
-          { status: 401 }
+          { status: 401 },
         );
       }
       const currentUser = await prisma.user.findFirst({
@@ -72,7 +61,7 @@ export async function POST(request: NextRequest) {
             error:
               "Seul un admin peut créer un compte pour un autre utilisateur",
           },
-          { status: 403 }
+          { status: 403 },
         );
       }
       finalClerkId = clerkId;
@@ -82,7 +71,7 @@ export async function POST(request: NextRequest) {
       if (!authHeader) {
         return NextResponse.json(
           { success: false, error: "Non authentifié (Clerk requis)" },
-          { status: 401 }
+          { status: 401 },
         );
       }
       const token = authHeader.replace("Bearer ", "");
@@ -94,7 +83,7 @@ export async function POST(request: NextRequest) {
       } catch (e) {
         return NextResponse.json(
           { success: false, error: "Token invalide (Clerk requis)" },
-          { status: 401 }
+          { status: 401 },
         );
       }
       finalClerkId = payload.sub;
@@ -107,8 +96,6 @@ export async function POST(request: NextRequest) {
         name,
         email,
         phone,
-        password: hashedPassword,
-        confirmationPassword: hashedPassword,
         role: "user",
       },
     });
@@ -121,7 +108,7 @@ export async function POST(request: NextRequest) {
         error: "Erreur serveur lors de la création de l'utilisateur",
         message: error instanceof Error ? error.message : String(error),
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

@@ -18,7 +18,7 @@ export default function UserProfilePage() {
   const router = useRouter();
   const [profile, setProfile] = useState<User | null>(null);
   const [connectedUserRole, setConnectedUserRole] = useState<string | null>(
-    null
+    null,
   );
   const [loading, setLoading] = useState(true);
   const [isEditing, setIsEditing] = useState(false);
@@ -114,7 +114,7 @@ export default function UserProfilePage() {
   const handleDelete = async () => {
     if (
       !confirm(
-        "Êtes-vous sûr de vouloir supprimer votre compte ? Cette action est irréversible."
+        "Êtes-vous sûr de vouloir supprimer votre compte ? Cette action est irréversible.",
       )
     ) {
       return;
@@ -138,7 +138,7 @@ export default function UserProfilePage() {
         if (connectedUserRole === "admin") {
           router.push("/allUsers");
         } else {
-          router.push("/inscription");
+          router.push("/informationsProfile");
         }
       } else {
         toast.error(data.error || "Erreur lors de la suppression");

@@ -26,7 +26,7 @@ export default async function middleware(request: NextRequest, event: any) {
     const user = await prisma.user.findUnique({ where: { clerkId } });
     if (user?.deletedAt) {
       return NextResponse.redirect(
-        new URL("/inscription?error=deleted", request.url)
+        new URL("/informationsProfile?error=deleted", request.url),
       );
     }
     // Logique admin dashboard

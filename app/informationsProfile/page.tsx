@@ -1,30 +1,46 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
 import { toast } from "react-hot-toast";
+import { useRouter } from "next/navigation";
 import { useAuth } from "@clerk/nextjs";
 import AccessDenied from "../components/AccessDenied";
 import Loading from "../components/Loading";
 
-// Page de connexion pour les utilisateurs existants
-export default function ConnexionPage() {
+// Page d'inscription pour les nouveaux utilisateurs
+export default function ProfileInformations() {
   const { isSignedIn, isLoaded, getToken } = useAuth();
   const [form, setForm] = useState({
+    name: "",
     email: "",
-    password: "",
+    phone: "",
+    role: "user",
   });
   const router = useRouter();
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  // Affiche un toast si error=deleted dans l'URL
+  if (typeof window !== "undefined") {
+    const params = new URLSearchParams(window.location.search);
+    if (params.get("error") === "deleted") {
+      toast.error("Votre compte a été supprimé. Veuillez vous réinscrire.");
+      // On retire le paramètre pour éviter le toast en boucle
+      params.delete("error");
+      const newUrl =
+        window.location.pathname +
+        (params.toString() ? `?${params.toString()}` : "");
+      window.history.replaceState({}, "", newUrl);
+    }
+  }
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,
+  ) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
       const token = await getToken();
-      const res = await fetch("/api/users/login", {
+      const res = await fetch("/api/users", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -34,12 +50,24 @@ export default function ConnexionPage() {
       });
       const data = await res.json();
       if (data.success) {
-        toast.success("Connexion réussie !");
+        toast.success("Inscription réussie !");
+        setForm({
+          name: "",
+          email: "",
+          phone: "",
+          role: "user",
+        });
         setTimeout(() => {
-          router.push("/");
+          router.push("/allParkings");
         }, 2000);
       } else {
-        toast.error(data.error || "Erreur lors de la connexion");
+        if (res.status === 400) {
+          toast.error(
+            data.error || "Données invalides. Veuillez vérifier les champs.",
+          );
+        } else {
+          toast.error(data.error || "Erreur lors de l'inscription");
+        }
       }
     } catch (err) {
       toast.error("Erreur serveur");
@@ -57,8 +85,19 @@ export default function ConnexionPage() {
 
   return (
     <div className="max-w-lg mx-auto mt-10 p-6 bg-white rounded shadow">
-      <h2 className="text-2xl font-bold mb-6 text-black">Connexion</h2>
+      <h2 className="text-2xl font-bold mb-6 text-black ">
+        Informations du profile
+      </h2>
       <form onSubmit={handleSubmit} className="flex flex-col gap-4 text-black">
+        <input
+          type="text"
+          name="name"
+          placeholder="Nom"
+          value={form.name}
+          onChange={handleChange}
+          required
+          className="border p-2 rounded"
+        />
         <input
           type="email"
           name="email"
@@ -69,19 +108,19 @@ export default function ConnexionPage() {
           className="border p-2 rounded"
         />
         <input
-          type="password"
-          name="password"
-          placeholder="Mot de passe"
-          value={form.password}
+          type="tel"
+          name="phone"
+          placeholder="Téléphone"
+          value={form.phone}
           onChange={handleChange}
-          required
           className="border p-2 rounded"
         />
+
         <button
           type="submit"
           className="bg-blue-600 text-white py-2 rounded font-semibold hover:bg-blue-700 cursor-pointer"
         >
-          Se connecter
+          S'inscrire
         </button>
       </form>
     </div>
