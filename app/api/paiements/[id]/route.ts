@@ -5,14 +5,14 @@ import { prisma } from "@/lib/prisma";
 // GET /api/paiements/[id] - Retourne un paiement par son ID si c'est celui du user connecté ou un admin
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: { id: string } },
 ) {
   try {
     const authHeader = request.headers.get("authorization");
     if (!authHeader) {
       return NextResponse.json(
         { success: false, error: "Non authentifié" },
-        { status: 401 }
+        { status: 401 },
       );
     }
     const token = authHeader.replace("Bearer ", "");
@@ -24,15 +24,17 @@ export async function GET(
     } catch (e) {
       return NextResponse.json(
         { success: false, error: "Token invalide" },
-        { status: 401 }
+        { status: 401 },
       );
     }
     // Vérifier que le user Clerk existe dans la BDD
-    const user = await prisma.user.findFirst({ where: { clerkId: payload.sub, deletedAt: null } });
+    const user = await prisma.user.findFirst({
+      where: { clerkId: payload.sub, deletedAt: null },
+    });
     if (!user) {
       return NextResponse.json(
         { success: false, error: "Utilisateur non trouvé ou supprimé" },
-        { status: 403 }
+        { status: 403 },
       );
     }
     const { id } = await params;
@@ -42,15 +44,15 @@ export async function GET(
     if (!paiement) {
       return NextResponse.json(
         { success: false, error: "Paiement non trouvé" },
-        { status: 404 }
+        { status: 404 },
       );
     }
     // Accès autorisé si propriétaire ou admin
     const isAdmin = user.role === "admin";
-    if (paiement.clerkId !== payload.sub && !isAdmin) {
+    if (paiement.userId !== user.userId && !isAdmin) {
       return NextResponse.json(
         { success: false, error: "Accès refusé" },
-        { status: 403 }
+        { status: 403 },
       );
     }
     return NextResponse.json({ success: true, paiement });
@@ -61,7 +63,7 @@ export async function GET(
         error: "Erreur serveur lors de la récupération du paiement",
         message: error instanceof Error ? error.message : String(error),
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

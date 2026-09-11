@@ -15,7 +15,7 @@ export default function PrePaiementPage() {
   const [loading, setLoading] = useState(false);
   const { user } = useUser();
   const [role, setRole] = useState<string>("");
-  const [clerkId, setClerkId] = useState("");
+  const [userId, setUserId] = useState("");
   const router = useRouter();
   const { getToken, isSignedIn, isLoaded } = useAuth();
 
@@ -51,8 +51,8 @@ export default function PrePaiementPage() {
         parkingSpotId: parkingspotId,
         duration: Number(duration),
       };
-      if (role === "admin" && clerkId) {
-        body.clerkId = clerkId;
+      if (role === "admin" && userId) {
+        body.userId = userId;
       }
       const res = await fetch("/api/paiements", {
         method: "POST",
@@ -125,14 +125,14 @@ export default function PrePaiementPage() {
               {role === "admin" && (
                 <div>
                   <label className="block mb-1">
-                    Clerk ID de l'utilisateur cible
+                    User ID de l'utilisateur cible
                   </label>
                   <input
                     type="text"
-                    value={clerkId}
-                    onChange={(e) => setClerkId(e.target.value)}
+                    value={userId}
+                    onChange={(e) => setUserId(e.target.value)}
                     className="w-full border px-2 py-1 rounded"
-                    placeholder="clerkId de l'utilisateur"
+                    placeholder="userId de l'utilisateur"
                   />
                 </div>
               )}

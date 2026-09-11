@@ -67,7 +67,6 @@ enum ReservationStatus {
 
 model Paiement {
   paiementId     String      @id @default(cuid())
-  clerkId        String
   userId         String
   parkingSpotId  String
   reservationId  String?

@@ -44,7 +44,6 @@ export interface Reservation {
 
 export interface Paiement {
   paiementId: string;
-  clerkId: string;
   userId: string;
   parkingSpotId: string;
   reservationId?: string;

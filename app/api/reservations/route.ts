@@ -9,7 +9,7 @@ export async function GET(request: NextRequest) {
     if (!authHeader) {
       return NextResponse.json(
         { success: false, error: "Non authentifié" },
-        { status: 401 }
+        { status: 401 },
       );
     }
     const token = authHeader.replace("Bearer ", "");
@@ -21,7 +21,7 @@ export async function GET(request: NextRequest) {
     } catch (e) {
       return NextResponse.json(
         { success: false, error: "Token invalide" },
-        { status: 401 }
+        { status: 401 },
       );
     }
 
@@ -32,7 +32,7 @@ export async function GET(request: NextRequest) {
     if (!user) {
       return NextResponse.json(
         { success: false, error: "Utilisateur non trouvé ou supprimé" },
-        { status: 404 }
+        { status: 404 },
       );
     }
 
@@ -96,7 +96,7 @@ export async function GET(request: NextRequest) {
         error: "Erreur serveur lors de la récupération des réservations",
         message: error instanceof Error ? error.message : "Erreur inconnue",
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -108,7 +108,7 @@ export async function POST(request: NextRequest) {
     if (!authHeader) {
       return NextResponse.json(
         { success: false, error: "Non authentifié" },
-        { status: 401 }
+        { status: 401 },
       );
     }
     const token = authHeader.replace("Bearer ", "");
@@ -120,7 +120,7 @@ export async function POST(request: NextRequest) {
     } catch (e) {
       return NextResponse.json(
         { success: false, error: "Token invalide" },
-        { status: 401 }
+        { status: 401 },
       );
     }
 
@@ -131,22 +131,22 @@ export async function POST(request: NextRequest) {
     if (!user) {
       return NextResponse.json(
         { success: false, error: "Utilisateur non trouvé ou supprimé" },
-        { status: 403 }
+        { status: 403 },
       );
     }
 
     const body = await request.json();
-    const { parkingSpotId, endDateTime, clerkId } = body;
-    // Si admin, peut créer pour un autre user via clerkId
+    const { parkingSpotId, endDateTime, userId } = body;
+    // Si admin, peut créer pour un autre user via userId
     const isAdmin = user.role === "admin";
-    const targetClerkId = isAdmin && clerkId ? clerkId : payload.sub;
+    const targetUserId = isAdmin && userId ? userId : user.userId;
     const targetUser = await prisma.user.findFirst({
-      where: { clerkId: targetClerkId, deletedAt: null },
+      where: { userId: targetUserId, deletedAt: null },
     });
     if (!targetUser) {
       return NextResponse.json(
         { success: false, error: "Utilisateur cible non trouvé ou supprimé" },
-        { status: 403 }
+        { status: 403 },
       );
     }
 
@@ -164,7 +164,7 @@ export async function POST(request: NextRequest) {
           error: "Réservation active déjà existante",
           message: "Cet utilisateur a déjà une réservation en cours.",
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -175,7 +175,7 @@ export async function POST(request: NextRequest) {
           error: "Champs manquants",
           message: "parkingSpotId, endDateTime requis",
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -193,7 +193,7 @@ export async function POST(request: NextRequest) {
           error: "Parking spot introuvable",
           message: `Aucune place avec l'ID ${parkingSpotId}`,
         },
-        { status: 404 }
+        { status: 404 },
       );
     }
 
@@ -207,7 +207,7 @@ export async function POST(request: NextRequest) {
           error: "Place non disponible ou non réservable",
           message: "Impossible de réserver cette place actuellement.",
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -221,7 +221,7 @@ export async function POST(request: NextRequest) {
           error: "Durée minimale non atteinte",
           message: "La réservation doit durer au moins 5 minutes.",
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
     if (duree > 15) {
@@ -231,7 +231,7 @@ export async function POST(request: NextRequest) {
           error: "Durée maximale dépassée",
           message: "La réservation ne peut pas dépasser 15 minutes.",
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -254,7 +254,7 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json(
       { success: true, data: newReservation },
-      { status: 201 }
+      { status: 201 },
     );
   } catch (error) {
     return NextResponse.json(
@@ -263,7 +263,7 @@ export async function POST(request: NextRequest) {
         error: "Erreur serveur lors de la création de la réservation",
         message: error instanceof Error ? error.message : "Erreur inconnue",
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

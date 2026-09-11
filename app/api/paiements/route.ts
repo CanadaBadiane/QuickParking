@@ -38,7 +38,7 @@ export async function GET(request: NextRequest) {
       );
     }
     const paiements = await prisma.paiement.findMany({
-      where: { clerkId: payload.sub },
+      where: { userId: user.userId },
     });
     return NextResponse.json({ success: true, paiements });
   } catch (error) {
@@ -76,7 +76,7 @@ export async function POST(request: NextRequest) {
       );
     }
     const body = await request.json();
-    // Vérifie le rôle dans la BDD : si admin, peut créer pour un autre user via clerkId
+    // Vérifie le rôle dans la BDD : si admin, peut créer pour un autre user via userId
     const user = await prisma.user.findFirst({
       where: { clerkId: payload.sub, deletedAt: null },
     });
@@ -87,9 +87,9 @@ export async function POST(request: NextRequest) {
       );
     }
     const isAdmin = user.role === "admin";
-    const targetClerkId = isAdmin && body.clerkId ? body.clerkId : payload.sub;
+    const targetUserId = isAdmin && body.userId ? body.userId : user.userId;
     const targetUser = await prisma.user.findFirst({
-      where: { clerkId: targetClerkId, deletedAt: null },
+      where: { userId: targetUserId, deletedAt: null },
     });
     if (!targetUser) {
       return NextResponse.json(
@@ -175,7 +175,7 @@ export async function POST(request: NextRequest) {
       amount: Math.round(amount * 100), // Stripe attend des centimes
       currency: "CAD",
       metadata: {
-        clerkId: user.clerkId,
+        userId: user.userId,
         parkingSpotId,
         reservationId: reservationId || "",
       },
@@ -184,7 +184,6 @@ export async function POST(request: NextRequest) {
 
     // Création du paiement en BDD avec statut 'pending'
     const paiementData: any = {
-      clerkId: targetUser.clerkId,
       userId: targetUser.userId,
       parkingSpotId,
       amount,

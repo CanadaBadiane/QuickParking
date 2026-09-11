@@ -14,7 +14,7 @@ export default function ReservationPage() {
   const [parkingSpotId, setParkingSpotId] = useState("");
   const [duration, setDuration] = useState(5); // durée en minutes
   const [loading, setLoading] = useState(false);
-  const [clerkId, setClerkId] = useState("");
+  const [userId, setUserId] = useState("");
   const [role, setRole] = useState<string>("");
   const { user } = useUser();
   const { getToken, isLoaded, isSignedIn } = useAuth();
@@ -44,11 +44,11 @@ export default function ReservationPage() {
     setLoading(true);
     const now = new Date();
     const endDateTime = new Date(
-      now.getTime() + duration * 60000
+      now.getTime() + duration * 60000,
     ).toISOString();
     const body: any = { parkingSpotId, endDateTime };
-    if (role === "admin" && clerkId) {
-      body.clerkId = clerkId;
+    if (role === "admin" && userId) {
+      body.userId = userId;
     }
     try {
       const token = await getToken();
@@ -97,13 +97,13 @@ export default function ReservationPage() {
             <form onSubmit={handleSubmit} className="flex flex-col gap-4">
               {role === "admin" && (
                 <label className="text-black">
-                  Clerk ID (pour admin)
+                  User ID (pour admin)
                   <input
                     type="text"
-                    value={clerkId}
-                    onChange={(e) => setClerkId(e.target.value)}
+                    value={userId}
+                    onChange={(e) => setUserId(e.target.value)}
                     className="w-full p-2 border rounded mt-1 text-black"
-                    placeholder="Clerk ID de l'utilisateur"
+                    placeholder="User ID de l'utilisateur"
                   />
                 </label>
               )}
