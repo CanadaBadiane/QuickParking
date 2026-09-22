@@ -35,20 +35,43 @@ export async function POST(request: NextRequest) {
       where: { stripePaymentIntentId: paymentIntent.id },
     });
     if (paiement) {
-      // Calcule startDateTime et endDateTime
-      const startDateTime = new Date();
-      const endDateTime = new Date(
-        startDateTime.getTime() + (paiement.duration ?? 0) * 60000,
-      );
-      // Met à jour le statut du paiement et les dates
-      await prisma.paiement.update({
-        where: { paiementId: paiement.paiementId },
-        data: {
-          status: "completed",
-          startDateTime,
-          endDateTime,
-        },
-      });
+      // Calcule startDateTime et endDateTime pour un paiement original
+      if (!paiement.parentPaiementId) {
+        const startDateTime = new Date();
+        const endDateTime = new Date(
+          startDateTime.getTime() + (paiement.duration ?? 0) * 60000,
+        );
+        // Met à jour le statut du paiement et les dates
+
+        await prisma.paiement.update({
+          where: { paiementId: paiement.paiementId },
+          data: {
+            status: "completed",
+            startDateTime,
+            endDateTime,
+          },
+        });
+      } else {
+        await prisma.paiement.update({
+          where: { paiementId: paiement.paiementId },
+          data: {
+            status: "completed",
+          },
+        });
+        const parent = await prisma.paiement.findUnique({
+          where: { paiementId: paiement.parentPaiementId! },
+        });
+        if (parent && parent.endDateTime) {
+          const newEnd = new Date(
+            parent.endDateTime.getTime() + paiement.duration * 60 * 1000,
+          );
+          const newDuration = parent.duration + paiement.duration;
+          await prisma.paiement.update({
+            where: { paiementId: parent.paiementId },
+            data: { endDateTime: newEnd, duration: newDuration },
+          });
+        }
+      }
       // Met à jour la place de parking liée
       await prisma.parkingSpot.update({
         where: { parkingSpotId: paiement.parkingSpotId },

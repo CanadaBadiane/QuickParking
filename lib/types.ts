@@ -47,6 +47,7 @@ export interface Paiement {
   userId: string;
   parkingSpotId: string;
   reservationId?: string;
+  parentPaiementId?: string;
   amount: number;
   duration: number; // en minutes
   method: "card";
@@ -54,4 +55,8 @@ export interface Paiement {
   startDateTime?: string | null;
   endDateTime?: string | null;
   createdAt: string;
+  updatedAt: string;
+
+  // Relations (optionnelles pour les réponses détaillées)
+  parkingSpot?: ParkingSpot;
 }
